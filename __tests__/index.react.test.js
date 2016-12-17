@@ -1,21 +1,16 @@
 import React from 'react';
-import { expect } from 'chai';
+// import { expect } from 'chai';
 import sinon from 'sinon';
 import { shallow, mount } from 'enzyme';
 
 import Button from '../src/index';
+import Input from '../src/Input.jsx';
 
-const { describe, it } = global;
+const { describe, it, expect } = global;
 
-describe('Button', () => {
-  it('should show the given text', () => {
-    const text = 'The Text';
-    const wrapper = shallow(<Button>{text}</Button>);
-    expect(wrapper.text()).to.be.equal(text);
-  });
-
+describe('Typeahead', () => {
   it('should handle the click event', () => {
-    const clickMe = sinon.stub();
+    const clickMe = sinon.spy();
     // Here we do a JSDOM render. So, that's why we need to
     // wrap this with a div.
     const wrapper = mount(
@@ -25,6 +20,6 @@ describe('Button', () => {
     );
 
     wrapper.find('button').simulate('click');
-    expect(clickMe.callCount).to.be.equal(1);
+    expect(clickMe.callCount).toEqual(1);
   });
 });

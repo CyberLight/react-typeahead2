@@ -4,6 +4,10 @@ const config = {
   module: {
     loaders: [
       {
+        test: /\.gif?$/,
+        loaders: ['url']
+      },
+      {
         test: /\.css?$/,
         loaders: ['style', 'raw'],
         include: path.resolve(__dirname, '../'),

@@ -1,10 +1,10 @@
 {
-  "name": "react-typeahead-ex",
+  "name": "react-typeahead2",
   "version": "0.0.0",
-  "description": "React Typeahead Ex Component",
+  "description": "React Typeahead2",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CyberLight/react-typeahead-ex.git"
+    "url": "https://github.com/CyberLight/react-typeahead2.git"
   },
   "license": "MIT",
   "jest": {
@@ -47,12 +47,14 @@
     "jest": "^18.0.0",
     "jsdom": "^9.5.0",
     "mocha": "^3.0.2",
+    "promise": "^7.1.1",
     "raw-loader": "^0.5.1",
     "react": "^15.3.2",
     "react-addons-test-utils": "^15.3.2",
     "react-dom": "^15.3.2",
     "sinon": "^1.17.6",
-    "storybook-addon-specifications": "^1.0.15"
+    "storybook-addon-specifications": "^1.0.15",
+    "whatwg-fetch": "^2.0.1"
   },
   "peerDependencies": {
     "react": "^0.14.7 || ^15.0.0"

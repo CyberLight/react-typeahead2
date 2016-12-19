@@ -79,8 +79,6 @@ const Spinner = styled.img`
 var SpinnerTemplate = (props) =>
   (<Spinner src={SpinnerGif} height={props.height} dir={props.dir} visible={props.visible}/>);
 
-const allTweets = require('../static/twitter_micro.json');
-
 const allOptions = [
   {id:1, name:'al'},
   {id:3, name:'ali-ba'},
@@ -198,7 +196,7 @@ storiesOf('Presentation UI', module)
           <div className="TwitterStylePage">
           <TestWrapper
             options={[]}
-            allData={allTweets}
+            allData={[]}
             value={"intel"}
             enableShowLoading={true}
             debounceRate={1000}

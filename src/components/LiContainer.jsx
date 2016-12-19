@@ -31,6 +31,7 @@ class LiContainer extends PureComponent {
 
   render() {
     return (
+      /* eslint-disable jsx-a11y/no-static-element-interactions */
       <li
         aria-selected={this.props.selected}
         role="option"
@@ -38,6 +39,7 @@ class LiContainer extends PureComponent {
       >
         { this.props.children }
       </li>
+      /* eslint-enable jsx-a11y/no-static-element-interactions */
     );
   }
 }

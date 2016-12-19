@@ -18,7 +18,9 @@ class Input extends PureComponent {
   }
 
   render() {
+    /* eslint-disable no-unused-vars */
     const { innerRef, ...other } = this.props;
+    /* eslint-enable no-unused-vars */
     return (
       <input ref={(c) => { this._input = c; }} {...other} />
     );

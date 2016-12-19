@@ -1,0 +1,31 @@
+.BootstrapPage {
+  margin-top: 50px;
+}
+
+.BootstrapPage .rtex-option-container {
+    min-width: 160px;
+    margin-top: 2px;
+    padding: 5px 0;
+    background-color: #fff;
+    border: 1px solid #ebebeb;
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    width: 100%;
+    overflow-y: auto;
+    max-height: 250px;
+}
+
+.BootstrapPage .rtex-option-item {
+  border-top: inherit;
+}
+
+.BootstrapPage .rtex-hint {
+  background-color: white;
+}
+
+.BootstrapPage .rtex-input {
+  position: relative;
+  background-color: transparent;
+  background-image: url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7);
+}

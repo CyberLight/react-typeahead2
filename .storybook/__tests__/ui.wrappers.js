@@ -81,6 +81,7 @@ class TestWrapper extends PureComponent {
     var options = this.state.options;
     return (
       <Typeahead
+        className={this.props.className || ""}
         displayKey="name"
         value={this.state.value}
         onChange={this._onChange}

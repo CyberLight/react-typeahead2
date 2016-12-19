@@ -5,6 +5,10 @@ import styled from 'styled-components';
 import Typeahead from '../../src/index';
 import {TestWrapper} from './ui.wrappers';
 import SpinnerGif from '../../src/static/spinner.gif';
+require('./../static/simple_typeahead.css');
+require('./../static/bootstrap.min.css');
+require('./../static/tw_typeahead.css');
+require('./../static/bs3_typeahead.css');
 
 const DivItem = styled.div`
   width: 100%;
@@ -76,8 +80,20 @@ const Spinner = styled.img`
   display: ${props => (props.visible ? 'block' : 'none')};
 `
 
+const SpinnerBootstrap = styled.img`
+  position: absolute;
+  top: 5px;
+  ${props => (props.dir == "rtl" ? 'left: 5px' : 'right: 5px')};
+  width: 20px;
+  height: 20px;
+  display: ${props => (props.visible ? 'block' : 'none')};
+`
+
 var SpinnerTemplate = (props) =>
   (<Spinner src={SpinnerGif} height={props.height} dir={props.dir} visible={props.visible}/>);
+
+var SpinnerBootstrapTemplate = (props) =>
+    (<SpinnerBootstrap src={SpinnerGif} height={props.height} dir={props.dir} visible={props.visible}/>);
 
 const allOptions = [
   {id:1, name:'al'},
@@ -138,7 +154,8 @@ let TwitterTemplate = (props) => {
 };
 
 storiesOf('Presentation UI', module)
-  .add('default view', () => (
+  .add('Default typeahead view', () => (
+    <div className="SimplePage">
       <Typeahead
         displayKey="name"
         options={[]}
@@ -150,36 +167,41 @@ storiesOf('Presentation UI', module)
           </div>
         )
       }}/>
+    </div>
   ))
-  .add('simple options view', () => {
+  .add('Simple typeahead view', () => {
     return (
-      <Typeahead
-        displayKey="name"
-        value={"test"}
-        showLoading={false}
-        allData={allOptions}
-        optionTemplate={simpleOptionTemplate}
-        options={[
-          {id:1, name:'View #1'},
-          {id:2, name:'View #2'},
-          {id:3, name:'Super long View #3'}
-        ]}/>
+        <div className="SimplePage">
+          <Typeahead
+            displayKey="name"
+            value={"test"}
+            showLoading={false}
+            allData={allOptions}
+            optionTemplate={simpleOptionTemplate}
+            options={[
+              {id:1, name:'View #1'},
+              {id:2, name:'View #2'},
+              {id:3, name:'Super long View #3'}
+            ]}/>
+        </div>
       )
     })
-    .add('with options and loading view', () => {
+    .add('Simple typeahead with loading view', () => {
         return (
-          <TestWrapper
-            options={[]}
-            value={"ali-baba"}
-            allData={allOptions}
-            enableShowLoading={true}
-            debounceRate={300}
-            optionTemplate={simpleOptionTemplate}/>
+          <div className="SimplePage">
+            <TestWrapper
+              options={[]}
+              value={"ali-baba"}
+              allData={allOptions}
+              enableShowLoading={true}
+              debounceRate={300}
+              optionTemplate={simpleOptionTemplate}/>
+          </div>
         );
     })
-    .add('rtl view', () => {
+    .add('RTL simple typeahead with loading view', () => {
         return (
-          <div dir="rtl">
+          <div dir="rtl" className="SimplePage">
           <TestWrapper
             options={[]}
             value={"ali-baba"}
@@ -189,9 +211,7 @@ storiesOf('Presentation UI', module)
             optionTemplate={simpleOptionTemplate}/>
           </div>
         );
-    }).add('styled like twitter typeahead view', () => {
-        var styles = require('./../static/tw_typeahead.css');
-
+    }).add('Styled like twitter typeahead view', () => {
         return (
           <div className="TwitterStylePage">
           <TestWrapper
@@ -202,6 +222,42 @@ storiesOf('Presentation UI', module)
             debounceRate={1000}
             optionTemplate={TwitterTemplate}
             loadingTemplate={SpinnerTemplate}/>
+          </div>
+        );
+    }).add('Styled like bootstrap 3 typeahead view', () => {
+        return (
+          <div className="BootstrapPage col-xs-offset-4 col-xs-4">
+            <form className="form-horizontal">
+              <div className="form-group">
+                <TestWrapper
+                  className="form-control input-sm"
+                  options={[]}
+                  allData={[]}
+                  value={"intel"}
+                  enableShowLoading={true}
+                  debounceRate={1000}
+                  optionTemplate={TwitterTemplate}
+                  loadingTemplate={SpinnerBootstrapTemplate}/>
+              </div>
+            </form>
+          </div>
+        );
+    }).add('RTL styled like bootstrap 3 typeahead view', () => {
+        return (
+          <div dir="rtl" className="BootstrapPage col-xs-offset-4 col-xs-4">
+            <form className="form-horizontal">
+              <div className="form-group">
+                <TestWrapper
+                  className="form-control input-sm"
+                  options={[]}
+                  allData={[]}
+                  value={"intel"}
+                  enableShowLoading={true}
+                  debounceRate={1000}
+                  optionTemplate={TwitterTemplate}
+                  loadingTemplate={SpinnerBootstrapTemplate}/>
+              </div>
+            </form>
           </div>
         );
     });

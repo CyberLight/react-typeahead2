@@ -199,9 +199,9 @@ storiesOf('Presentation UI', module)
           <TestWrapper
             options={[]}
             allData={allTweets}
-            value={"micro"}
+            value={"intel"}
             enableShowLoading={true}
-            debounceRate={300}
+            debounceRate={1000}
             optionTemplate={TwitterTemplate}
             loadingTemplate={SpinnerTemplate}/>
           </div>

@@ -1,5 +1,33 @@
 import React, {PureComponent} from 'react';
 import Typeahead from '../../src/index';
+import Promise from 'promise';
+import 'whatwg-fetch';
+
+class DataLoader {
+  static getData(data) {
+      let _status = (response) => {
+        if (response.status >= 200 && response.status < 300) {
+          return response
+        } else {
+          var error = new Error(response.statusText)
+          error.response = response
+          throw error;
+        }
+      };
+
+      return new Promise((resolve, reject) => {
+          const URL = `https://typeahead-js-twitter-api-proxy.herokuapp.com/demo/search?q=${data}`
+          let options = {
+            method: 'GET'
+          };
+          fetch(URL, options).
+          then(this._status).
+          then(r => r.json()).
+          then(resolve).
+          catch(reject);
+      });
+  }
+}
 
 class TestWrapper extends PureComponent {
   constructor(props){
@@ -26,27 +54,25 @@ class TestWrapper extends PureComponent {
       });
   }
 
-  _onFetchData = (value) => {
+  _onFetchData = async (value) => {
     var allData = this.props.allData;
 
     if(this.state.enableShowLoading){
       this.setState({
         showLoading: true
       });
-      setTimeout(()=>{
-        this.setState({
-          showLoading: false,
-          value: this.state.value,
-          options: Array.from(
-            allData.filter(x => x.name.toLowerCase().indexOf(value.toLowerCase()) >= 0))
-        });
-      }, 2000);
+      let response = await DataLoader.getData(value);
+      this.setState({
+        showLoading: false,
+        value: this.state.value,
+        options: Array.from(response.slice(0,5))
+      });
     } else {
       this.setState({
         showLoading: false,
         value: this.state.value,
         options: Array.from(
-          allData.filter(x => x.name.toLowerCase().indexOf(value.toLowerCase()) >= 0))
+          allData.filter(x => x.name.toLowerCase().indexOf(value.toLowerCase()) >= 0).slice(0,5))
       });
     }
   }

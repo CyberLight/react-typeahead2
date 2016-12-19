@@ -12,7 +12,6 @@ const PresentationInput = styled(Input)`
   width: inherit;
   -webkit-text-fill-color: silver;
   position: absolute;
-  width: inherit;
   padding: 2px 0;
   border-width: 1px;
 `;
@@ -26,7 +25,6 @@ const ComboboxInput = styled(Input)`
 `;
 
 const TypeaheadDiv = styled.div`
-  width: inherit;
   position: relative;
 `;
 
@@ -107,7 +105,8 @@ class Typeahead extends PureComponent {
     minLength: 1,
     showLoading: false,
     debounceRate: 100,
-    loadingTemplate: defaultLoadingTemplate
+    loadingTemplate: defaultLoadingTemplate,
+    className: ""
   }
 
   static propTypes = {
@@ -123,7 +122,8 @@ class Typeahead extends PureComponent {
     minLength: React.PropTypes.number,
     showLoading: React.PropTypes.bool,
     debounceRate: React.PropTypes.number,
-    value: React.PropTypes.string
+    value: React.PropTypes.string,
+    className: React.PropTypes.string
   }
 
   constructor(props){
@@ -155,7 +155,8 @@ class Typeahead extends PureComponent {
 
     this.setState({
       width: clientWidth,
-      height: clientHeight
+      height: clientHeight,
+      dropdownVisible: false
     });
   }
 
@@ -171,6 +172,7 @@ class Typeahead extends PureComponent {
     var hint = (dir == "rtl" ? false : nextProps.hint);
     var nextValue = this._getValueByIndex(options, 0, displayKey);
     var hintValue = (hint ? this._getHint(value, nextValue) : "")
+    var hasOptions = (this._getOptionsCount(nextProps.options) > 0);
 
     this.setState({
       value: nextProps.value,
@@ -179,6 +181,7 @@ class Typeahead extends PureComponent {
       hint: hint,
       minLength: nextProps.minLength,
       showLoading: nextProps.showLoading,
+      dropdownVisible: hasOptions,
       hintValue: hint ? hintValue : "",
       direction: dir
     });
@@ -206,11 +209,10 @@ class Typeahead extends PureComponent {
   }
 
   _onFocus = (e) => {
-    if(!this.state.dropdownVisible){
-      this.setState({
-        dropdownVisible: true
-      });
-    }
+    var hasOptions = (this._getOptionsCount(this.props.options) > 0);
+    this.setState({
+      dropdownVisible: hasOptions
+    });
   }
 
   _onClick = (e) => {
@@ -275,7 +277,9 @@ class Typeahead extends PureComponent {
   }
 
   _getHint = (currentValue, nextValue) => {
-    if (nextValue.startsWith(currentValue)) {
+    var lowerCurrentValue = currentValue.toLowerCase();
+    var lowerNextValue = nextValue.toLowerCase();
+    if (lowerNextValue.toLowerCase().startsWith(lowerCurrentValue)) {
       return nextValue;
     }
     return "";
@@ -375,7 +379,7 @@ class Typeahead extends PureComponent {
           role="presentation"
           aria-hidden={true}
           value={this.state.hintValue}
-          className="rtex-hint"/>
+          className={"rtex-hint " + this.props.className}/>
         <ComboboxInput
           innerRef={c => {this._input = c;}}
           role="combobox"
@@ -389,7 +393,7 @@ class Typeahead extends PureComponent {
           onBlur={this._onBlur}
           onChange={this._onChange}
           onKeyDown={this._onKeyDown}
-          className="rtex-input"/>
+          className={"rtex-input " + this.props.className}/>
         <LoadingTemplate className="rtex-default-spinner"
                          dir={this.state.direction}
                          height={this.state.height}
@@ -406,7 +410,7 @@ class Typeahead extends PureComponent {
 
     return (
       <UlContainer
-          className="rtex-option-container"
+          className={"rtex-option-container"}
           visible={dropdownVisible}>
           {
             options.map((data, index) => {

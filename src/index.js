@@ -1,104 +1,29 @@
-import React, {PureComponent} from 'react';
-import ReactDOM from 'react-dom';
-import styled from 'styled-components';
+import React, { PureComponent } from 'react';
 import _ from 'lodash';
 
-import Input from './Input.jsx';
 import SpinnerGif from './static/spinner.gif';
-import {getDirection} from './utils';
+import getDirection from './utils';
+import LiContainer from './components/LiContainer';
+import PresentationInput from './components/PresentationInput';
+import ComboboxInput from './components/ComboboxInput';
+import TypeaheadDiv from './components/TypeaheadDiv';
+import TypeaheadContainer from './components/TypeaheadContainer';
+import UlContainer from './components/UlContainer';
+import LoadingImg from './components/LoadingImg';
 
-const PresentationInput = styled(Input)`
-  color: silver;
-  width: inherit;
-  -webkit-text-fill-color: silver;
-  position: absolute;
-  padding: 2px 0;
-  border-width: 1px;
-`;
+const defaultLoadingTemplate = props =>
+  (<LoadingImg src={SpinnerGif} height={props.height} dir={props.dir} visible={props.visible} />);
 
-const ComboboxInput = styled(Input)`
-  width: inherit;
-  position: inherit;
-  background: transparent;
-  padding: 2px 0;
-  border-width: 1px;
-`;
-
-const TypeaheadDiv = styled.div`
-  position: relative;
-`;
-
-const TypeaheadContainer = styled.div`
-  width: 100%;
-  position: relative;
-`;
-
-const UlContainer = styled.ul`
-  width: inherit;
-  background: #fff;
-  position: absolute;
-  box-sizing: border-box;
-  display: ${props => (props.visible ? 'block' : 'none')};
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-`;
-
-const LoadingImg = styled.img`
-  position: absolute;
-  top: 1px;
-  ${props => (props.dir == "rtl" ? 'left: 0' : 'right: 0')};
-  width: ${props => props.height}px;
-  height: ${props => props.height}px;
-  display: ${props => (props.visible ? 'block' : 'none')};
-`
-
-var defaultLoadingTemplate = (props) =>
-  (<LoadingImg src={SpinnerGif} height={props.height} dir={props.dir} visible={props.visible}/>);
-
-class LiContainer extends PureComponent {
-
-  static propTypes = {
-    selected: React.PropTypes.bool,
-    optionIndex: React.PropTypes.number,
-    onClick: React.PropTypes.func
-  }
-
-  constructor(props){
-    super(props);
-    this.state = {
-      selected: this.selected,
-      optionIndex: this.optionIndex
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      selected: nextProps.selected,
-      optionIndex: nextProps.optionIndex
-    });
-  }
-
-  _onClick = (e) => {
-    e.nativeEvent.stopImmediatePropagation();
-    this.props.onClick(this.state.optionIndex);
-  }
-
-  render () {
-    return (
-      <li aria-selected={this.props.selected}
-          role='option'
-          onClick={this._onClick}>
-          {this.props.children}
-      </li>
-    )
-  }
-}
+defaultLoadingTemplate.propTypes = {
+  height: React.PropTypes.number,
+  dir: React.PropTypes.string,
+  visible: React.PropTypes.boolean,
+};
 
 class Typeahead extends PureComponent {
 
   static defaultProps = {
-    value: "",
+    value: '',
     dropdownVisible: false,
     options: [],
     hint: true,
@@ -106,7 +31,7 @@ class Typeahead extends PureComponent {
     showLoading: false,
     debounceRate: 100,
     loadingTemplate: defaultLoadingTemplate,
-    className: ""
+    className: '',
   }
 
   static propTypes = {
@@ -117,16 +42,18 @@ class Typeahead extends PureComponent {
     onBlur: React.PropTypes.func,
     onOptionClick: React.PropTypes.func,
     onOptionChange: React.PropTypes.func,
+    onClick: React.PropTypes.func,
     displayKey: React.PropTypes.string.isRequired,
     hint: React.PropTypes.bool,
     minLength: React.PropTypes.number,
     showLoading: React.PropTypes.bool,
     debounceRate: React.PropTypes.number,
     value: React.PropTypes.string,
-    className: React.PropTypes.string
+    className: React.PropTypes.string,
+    options: React.PropTypes.array,
   }
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       value: props.value,
@@ -135,28 +62,51 @@ class Typeahead extends PureComponent {
       selectedIndex: -1,
       hint: props.hint,
       minLength: props.minLength,
-      hintValue: "",
+      hintValue: '',
       showLoading: props.showLoading,
-      direction: "ltr",
+      direction: 'ltr',
       width: 0,
-      height: 0
+      height: 0,
     };
   }
 
   componentDidMount() {
     document.addEventListener('click', this._onDocActivate);
-    var value = this.state.value;
-    this._onChange({target:{value: value}});
+    const value = this.state.value;
+    this._onChange({ target: { value } });
 
     if (value.length >= this.state.minLength) {
       this._fetchDataHandler(value);
     }
-    let {clientHeight, clientWidth} = ReactDOM.findDOMNode(this._input);
+
+    const { clientHeight, clientWidth } = this._inputTypeAhead._input;
+
+    this.clientHeight = clientHeight;
+    this.clientWidth = clientWidth;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const dir = getDirection(this._inputTypeAhead._input);
+    const value = nextProps.value;
+    const displayKey = nextProps.displayKey;
+    const options = nextProps.options;
+    const hint = (dir === 'rtl' ? false : nextProps.hint);
+    const nextValue = this._getValueByIndex(options, 0, displayKey);
+    const hintValue = (hint ? this._getHint(value, nextValue) : '');
+    const hasOptions = (this._getOptionsCount(nextProps.options) > 0);
 
     this.setState({
-      width: clientWidth,
-      height: clientHeight,
-      dropdownVisible: false
+      value: nextProps.value,
+      options: nextProps.options,
+      selectedIndex: this._getSelectedIndex(options, 0),
+      hint,
+      minLength: nextProps.minLength,
+      showLoading: nextProps.showLoading,
+      dropdownVisible: hasOptions,
+      hintValue: hint ? hintValue : '',
+      direction: dir,
+      width: this.clientWidth,
+      height: this.clientHeight,
     });
   }
 
@@ -164,34 +114,11 @@ class Typeahead extends PureComponent {
     document.removeEventListener('click', this._onDocActivate);
   }
 
-  componentWillReceiveProps(nextProps) {
-    var dir = getDirection(this._input);
-    var value = nextProps.value;
-    var displayKey = nextProps.displayKey
-    var options = nextProps.options
-    var hint = (dir == "rtl" ? false : nextProps.hint);
-    var nextValue = this._getValueByIndex(options, 0, displayKey);
-    var hintValue = (hint ? this._getHint(value, nextValue) : "")
-    var hasOptions = (this._getOptionsCount(nextProps.options) > 0);
-
-    this.setState({
-      value: nextProps.value,
-      options: nextProps.options,
-      selectedIndex: this._getSelectedIndex(options, 0),
-      hint: hint,
-      minLength: nextProps.minLength,
-      showLoading: nextProps.showLoading,
-      dropdownVisible: hasOptions,
-      hintValue: hint ? hintValue : "",
-      direction: dir
-    });
-  }
-
   _getValueByIndex = (options, index, displayKey) => {
-    var value = options &&
+    const value = (options &&
            options.length &&
            options[index] &&
-           options[index][displayKey] ||
+           options[index][displayKey]) ||
            this.state.value;
     return value;
   }
@@ -202,16 +129,16 @@ class Typeahead extends PureComponent {
            index;
   }
 
-  _onDocActivate = (e) => {
-      this.setState({
-        dropdownVisible: false
-      });
+  _onDocActivate = () => {
+    this.setState({
+      dropdownVisible: false,
+    });
   }
 
-  _onFocus = (e) => {
-    var hasOptions = (this._getOptionsCount(this.props.options) > 0);
+  _onFocus = () => {
+    const hasOptions = (this._getOptionsCount(this.props.options) > 0);
     this.setState({
-      dropdownVisible: hasOptions
+      dropdownVisible: hasOptions,
     });
   }
 
@@ -224,47 +151,47 @@ class Typeahead extends PureComponent {
 
   _onBlur = (e) => {
     if (this.props.onBlur) {
-        this.props.onBlur(e);
+      this.props.onBlur(e);
     }
   }
 
   _onChange = (e) => {
-    var value = e.target.value;
-    var options = this.state.options;
-    var dir = getDirection(this._input);
-    var hint = (dir == "rtl" ? false : this.state.hint);
+    const value = e.target.value;
+    const dir = getDirection(this._inputTypeAhead._input);
+    const hint = (dir === 'rtl' ? false : this.state.hint);
+    const hasOptions = (this._getOptionsCount(this.state.options) > 0);
 
     this.setState({
-      value: value,
+      value,
       selectedIndex: -1,
-      dropdownVisible: true,
-      hint: hint
+      dropdownVisible: hasOptions,
+      hint,
     });
 
     if (this.props.onChange) {
-        this.props.onChange(e);
+      this.props.onChange(e);
     }
 
     if (value.length >= this.state.minLength) {
-        this._fetchDataHandler(value);
+      this._fetchDataHandler(value);
     }
   }
 
   _fetchDataHandler = _.debounce((value) => {
-    if(this.props.onFetchData){
+    if (this.props.onFetchData) {
       this.props.onFetchData(value);
     }
   }, this.props.debounceRate);
 
   _getOptionsCount = (options) => {
-    return options && options.length || options.size || 0;
+    return options && (options.length || options.size || 0);
   }
 
   _optionClick = (index) => {
-    var options = this.state.options;
-    var displayKey = this.props.displayKey;
+    const options = this.state.options;
+    const displayKey = this.props.displayKey;
 
-    if(this.props.onOptionClick){
+    if (this.props.onOptionClick) {
       this.props.onOptionClick(options[index], index);
       this.props.onOptionChange(options[index], index);
     }
@@ -272,118 +199,124 @@ class Typeahead extends PureComponent {
     this.setState({
       selectedIndex: index,
       dropdownVisible: false,
-      value: this._getValueByIndex(options, index, displayKey)
+      value: this._getValueByIndex(options, index, displayKey),
     });
   }
 
   _getHint = (currentValue, nextValue) => {
-    var lowerCurrentValue = currentValue.toLowerCase();
-    var lowerNextValue = nextValue.toLowerCase();
+    const lowerCurrentValue = currentValue.toLowerCase();
+    const lowerNextValue = nextValue.toLowerCase();
     if (lowerNextValue.toLowerCase().startsWith(lowerCurrentValue)) {
       return nextValue;
     }
-    return "";
+    return '';
   }
 
   _onKeyDown = (e) => {
-    var hint = this.state.hint;
-    var key = e.key;
-    var options = this.state.options;
-    var dropdownVisible = this.state.dropdownVisible;
-    var selectedIndex = this.state.selectedIndex;
-    var displayKey = this.props.displayKey;
-    var value = this.state.value;
-    var hintValue = hint ? this.state.hintValue : "";
+    const hint = this.state.hint;
+    const key = e.key;
+    const options = this.state.options;
+    const dropdownVisible = this.state.dropdownVisible;
+    const selectedIndex = this.state.selectedIndex;
+    const displayKey = this.props.displayKey;
+    const value = this.state.value;
+    const hintValue = hint ? this.state.hintValue : '';
 
     switch (key) {
       case 'Esc':
-      case 'Escape':
+      case 'Escape': {
         this.setState({
           dropdownVisible: false,
-          hintValue: ""
+          hintValue: '',
         });
         break;
+      }
       case 'End':
-      case 'Tab':
+      case 'Tab': {
         if (hint && !e.shiftKey) {
-          if(hintValue){
+          if (hintValue) {
             e.preventDefault();
             this.setState({
               value: hintValue,
-              hintValue: "",
-              dropdownVisible: false
+              hintValue: '',
+              dropdownVisible: false,
             });
           } else {
             this.setState({
-              dropdownVisible: false
+              dropdownVisible: false,
             });
           }
         }
         break;
-      case 'Enter':
-        if(this._getOptionsCount(options) > 0){
+      }
+      case 'Enter': {
+        if (this._getOptionsCount(options) > 0) {
           this.setState({
-            value:  this._getValueByIndex(options, selectedIndex, displayKey),
-            dropdownVisible: false
+            value: this._getValueByIndex(options, selectedIndex, displayKey),
+            dropdownVisible: false,
           });
-          if(this.props.onOptionChange){
+          if (this.props.onOptionChange) {
             this.props.onOptionChange(options[selectedIndex], selectedIndex);
           }
         }
         break;
+      }
       case 'ArrowUp':
-      case 'ArrowDown':
-        var increment = key == 'ArrowUp' ? -1 : 1;
+      case 'ArrowDown': {
+        const increment = key === 'ArrowUp' ? -1 : 1;
+        const len = this._getOptionsCount(options);
 
-        var len = this._getOptionsCount(options);
         if (!dropdownVisible &&
              (options && len > 0)) {
-          var nextValue =  this._getValueByIndex(options, selectedIndex, displayKey);
+          const nextValue = this._getValueByIndex(options, selectedIndex, displayKey);
           this.setState({
             dropdownVisible: true,
-            hintValue: (hint ? this._getHint(value, nextValue) : "")
+            hintValue: (hint ? this._getHint(value, nextValue) : ''),
           });
         }
 
-        var calcIndex = (len, curIndex) => {
-          var newIndex =  curIndex + increment;
+        const calcIndex = (length, curIndex) => {
+          let newIndex = curIndex + increment;
           if (newIndex < 0) {
-            newIndex += len;
+            newIndex += length;
           }
-          return newIndex % len;
-        }
+          return newIndex % length;
+        };
 
-        if(dropdownVisible &&
-           (options && len > 0)){
-            var newIndex = calcIndex(len, selectedIndex);
-            var nextValue = options[newIndex][displayKey];
-            this.setState({
-              selectedIndex: newIndex,
-              hintValue: (hint ? this._getHint(value, nextValue) : "")
-            });
+        if (dropdownVisible &&
+           (options && len > 0)) {
+          const newIndex = calcIndex(len, selectedIndex);
+          const nextValue = options[newIndex][displayKey];
+          this.setState({
+            selectedIndex: newIndex,
+            hintValue: (hint ? this._getHint(value, nextValue) : ''),
+          });
         }
         break;
+      }
       default:
         break;
     }
   }
 
   _renderInputs = () => {
-    var value = this.state.value;
-    var LoadingTemplate = this.props.loadingTemplate;
+    const value = this.state.value;
+    const LoadingTemplate = this.props.loadingTemplate;
 
     return (
       <TypeaheadDiv className="rtex-input-container">
         <PresentationInput
-          disabled={true}
+          disabled
           role="presentation"
-          aria-hidden={true}
+          aria-hidden
           value={this.state.hintValue}
-          className={"rtex-hint " + this.props.className}/>
+          className={`rtex-hint ${this.props.className}`}
+        />
         <ComboboxInput
-          innerRef={c => {this._input = c;}}
+          innerRef={(c) => { this._inputTypeAhead = c; }}
           role="combobox"
-          aria-autocomplete='both'
+          aria-expanded="true"
+          aria-autocomplete="both"
           value={value}
           spellCheck={false}
           autoComplete={false}
@@ -393,55 +326,62 @@ class Typeahead extends PureComponent {
           onBlur={this._onBlur}
           onChange={this._onChange}
           onKeyDown={this._onKeyDown}
-          className={"rtex-input " + this.props.className}/>
-        <LoadingTemplate className="rtex-default-spinner"
-                         dir={this.state.direction}
-                         height={this.state.height}
-                         visible={this.state.showLoading}/>
+          className={`rtex-input ${this.props.className}`}
+        />
+        <LoadingTemplate
+          className="rtex-default-spinner"
+          dir={this.state.direction}
+          height={this.state.height}
+          visible={this.state.showLoading}
+        />
       </TypeaheadDiv>
-    )
+    );
   }
 
   _renderOptions = () => {
-    var dropdownVisible = this.state.dropdownVisible;
-    var value = this.state.value;
-    var OptionTemplate = this.props.optionTemplate;
-    var options = this.state.options;
+    const dropdownVisible = this.state.dropdownVisible;
+    const value = this.state.value;
+    const OptionTemplate = this.props.optionTemplate;
+    const options = this.state.options;
 
     return (
       <UlContainer
-          className={"rtex-option-container"}
-          visible={dropdownVisible}>
-          {
+        className={'rtex-option-container'}
+        visible={dropdownVisible}
+      >
+        {
             options.map((data, index) => {
-                let selected = this.state.selectedIndex == index;
-                return(
-                  <LiContainer
+              const selected = this.state.selectedIndex === index;
+              return (
+                <LiContainer
+                  selected={selected}
+                  optionIndex={index}
+                  key={index}
+                  onClick={this._optionClick}
+                  onMouseOver={this._optionMouseOver}
+                >
+
+                  <OptionTemplate
+                    data={data}
+                    index={index}
+                    value={value}
                     selected={selected}
-                    optionIndex={index}
-                    key={index}
-                    onClick={this._optionClick}
-                    onMouseOver={this._optionMouseOver}>
+                  />
 
-                    <OptionTemplate
-                      data={data}
-                      index={index}
-                      value={value}
-                      selected={selected}/>
-
-                  </LiContainer>
-                );
+                </LiContainer>
+              );
             })
           }
       </UlContainer>
-    )
+    );
   }
 
-  render(){
+  render() {
     return (
       <TypeaheadContainer
-        ref={c => { this._container = c; }}
-        className="rtex-container">
+        ref={(c) => { this._container = c; }}
+        className="rtex-container"
+      >
         {this._renderInputs()}
         {this._renderOptions()}
       </TypeaheadContainer>

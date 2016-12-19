@@ -1,17 +1,16 @@
-import ReactDOM from 'react-dom';
+/* global window: false */
 
-function getDirection(element){
-    var result = null;
-    if (element){
-        if (window.getComputedStyle){
-            var elem = ReactDOM.findDOMNode(element);
-            result = window.getComputedStyle(elem,null).direction;
-        } else if (element.currentStyle){
-            result = element.currentStyle.direction;
-        }
+function getDirection(element) {
+  let result = null;
+  if (element) {
+    if (window.getComputedStyle) {
+      result = window.getComputedStyle(element, null).direction;
+    } else if (element.currentStyle) {
+      result = element.currentStyle.direction;
     }
+  }
 
-    return result;
+  return result;
 }
 
-export {getDirection}
+export default getDirection;

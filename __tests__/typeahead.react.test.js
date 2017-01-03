@@ -265,3 +265,33 @@ it('Typeahead should select item by press <Enter>', () => {
   expect(inputComponent.prop('value')).toEqual('value 2');
   expect(component.find('.rtex-is-open').length).toEqual(0);
 });
+
+test('Typeahead should show hint for value', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <Typeahead
+      value="valu"
+      showLoading
+      displayKey={'name'}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  const hintComponent = component.find('.rtex-hint').at(0);
+  expect(hintComponent.prop('value')).toEqual('value 1');
+
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  const hintComponent2 = component.find('.rtex-hint').at(0);
+  expect(hintComponent2.prop('value')).toEqual('value 2');
+
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  const hintComponent3 = component.find('.rtex-hint').at(0);
+  expect(hintComponent3.prop('value')).toEqual('value 3');
+});

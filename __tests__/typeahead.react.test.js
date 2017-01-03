@@ -295,3 +295,128 @@ test('Typeahead should show hint for value', () => {
   const hintComponent3 = component.find('.rtex-hint').at(0);
   expect(hintComponent3.prop('value')).toEqual('value 3');
 });
+
+test('Typeahead should not show hint if hint disabled', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <Typeahead
+      value="valu"
+      showLoading
+      hint={false}
+      displayKey={'name'}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  const hintComponent = component.find('.rtex-hint').at(0);
+  expect(hintComponent.prop('value')).toEqual('');
+});
+
+test('Typeahead should autocomplete by press <Tab> by hint for value', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <Typeahead
+      value="valu"
+      showLoading
+      displayKey={'name'}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  const hintComponent = component.find('.rtex-hint').at(0);
+  expect(hintComponent.prop('value')).toEqual('value 2');
+  inputComponent.simulate('keyDown', { key: 'Tab' });
+  expect(inputComponent.prop('value')).toEqual('value 2');
+});
+
+test('Typeahead should autocomplete by press <End> by hint for value', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <Typeahead
+      value="valu"
+      showLoading
+      displayKey={'name'}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  const hintComponent = component.find('.rtex-hint').at(0);
+  expect(hintComponent.prop('value')).toEqual('value 2');
+  inputComponent.simulate('keyDown', { key: 'End' });
+  expect(inputComponent.prop('value')).toEqual('value 2');
+});
+
+test('Typeahead should not autocomplete by press <Tab> if hint disabled', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <Typeahead
+      value="valu"
+      showLoading
+      hint={false}
+      displayKey={'name'}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  const hintComponent = component.find('.rtex-hint').at(0);
+  expect(hintComponent.prop('value')).toEqual('');
+  inputComponent.simulate('keyDown', { key: 'Tab' });
+  expect(inputComponent.prop('value')).toEqual('valu');
+});
+
+test('Typeahead should not autocomplete by press <End> if hint disabled', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <Typeahead
+      value="valu"
+      showLoading
+      hint={false}
+      displayKey={'name'}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  const hintComponent = component.find('.rtex-hint').at(0);
+  expect(hintComponent.prop('value')).toEqual('');
+  inputComponent.simulate('keyDown', { key: 'End' });
+  expect(inputComponent.prop('value')).toEqual('valu');
+});

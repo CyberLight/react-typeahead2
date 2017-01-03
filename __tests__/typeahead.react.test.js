@@ -166,8 +166,6 @@ it('Typeahead should move selection for item when ArrowDown pressed', () => {
 
   const inputComponent = component.find('.rtex-input').at(0);
   inputComponent.simulate('keyDown', { key: 'ArrowDown' });
-
-  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
   const selectedItem1 = component.find('.rtex-is-open .rtex-option-selected');
   expect(selectedItem1.text()).toEqual('value 1');
 
@@ -182,4 +180,38 @@ it('Typeahead should move selection for item when ArrowDown pressed', () => {
   inputComponent.simulate('keyDown', { key: 'ArrowDown' });
   const selectedItem1Again = component.find('.rtex-is-open .rtex-option-selected');
   expect(selectedItem1Again.text()).toEqual('value 1');
+});
+
+it('Typeahead should move selection for item when ArrowUp pressed', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <Typeahead
+      value=""
+      showLoading
+      displayKey={'name'}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('keyDown', { key: 'ArrowUp' });
+  const selectedItem2 = component.find('.rtex-is-open .rtex-option-selected');
+  expect(selectedItem2.text()).toEqual('value 2');
+
+  inputComponent.simulate('keyDown', { key: 'ArrowUp' });
+  const selectedItem3 = component.find('.rtex-is-open .rtex-option-selected');
+  expect(selectedItem3.text()).toEqual('value 1');
+
+  inputComponent.simulate('keyDown', { key: 'ArrowUp' });
+  const selectedItem2Again = component.find('.rtex-is-open .rtex-option-selected');
+  expect(selectedItem2Again.text()).toEqual('value 3');
+
+  inputComponent.simulate('keyDown', { key: 'ArrowUp' });
+  const selectedItem1 = component.find('.rtex-is-open .rtex-option-selected');
+  expect(selectedItem1.text()).toEqual('value 2');
 });

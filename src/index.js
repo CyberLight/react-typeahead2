@@ -265,16 +265,6 @@ class Typeahead extends PureComponent {
       case 'ArrowDown': {
         const increment = key === 'ArrowUp' ? -1 : 1;
         const len = this._getOptionsCount(options);
-
-        if (!dropdownVisible &&
-             (options && len > 0)) {
-          const nextValue = this._getValueByIndex(options, selectedIndex, displayKey);
-          this.setState({
-            dropdownVisible: true,
-            hintValue: (hint ? this._getHint(value, nextValue) : ''),
-          });
-        }
-
         const calcIndex = (length, curIndex) => {
           let newIndex = curIndex + increment;
           if (newIndex < 0) {
@@ -282,6 +272,17 @@ class Typeahead extends PureComponent {
           }
           return newIndex % length;
         };
+
+        if (!dropdownVisible &&
+             (options && len > 0)) {
+          const newIndex = calcIndex(len, selectedIndex);
+          const nextValue = this._getValueByIndex(options, newIndex, displayKey);
+          this.setState({
+            dropdownVisible: true,
+            selectedIndex: newIndex,
+            hintValue: (hint ? this._getHint(value, nextValue) : ''),
+          });
+        }
 
         if (dropdownVisible &&
            (options && len > 0)) {

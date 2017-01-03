@@ -240,3 +240,28 @@ it('Typeahead should show options on focus and hide options when <Esc> pressed',
   inputComponent.simulate('keyDown', { key: 'Esc' });
   expect(component.find('.rtex-is-open').length).toEqual(0);
 });
+
+it('Typeahead should select item by press <Enter>', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <Typeahead
+      value="value 1"
+      showLoading
+      displayKey={'name'}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('focus');
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  inputComponent.simulate('keyDown', { key: 'Enter' });
+  expect(inputComponent.prop('value')).toEqual('value 2');
+  expect(component.find('.rtex-is-open').length).toEqual(0);
+});

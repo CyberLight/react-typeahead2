@@ -374,7 +374,6 @@ class Typeahead extends PureComponent {
                   optionIndex={index}
                   key={index}
                   onClick={this._optionClick}
-                  onMouseOver={this._optionMouseOver}
                 >
 
                   <OptionTemplate

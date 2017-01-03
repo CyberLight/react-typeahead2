@@ -420,3 +420,31 @@ test('Typeahead should not autocomplete by press <End> if hint disabled', () => 
   inputComponent.simulate('keyDown', { key: 'End' });
   expect(inputComponent.prop('value')).toEqual('valu');
 });
+
+test('Typeahead should select option by click on it', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <Typeahead
+      value="valu"
+      showLoading
+      hint={false}
+      displayKey={'name'}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('focus');
+  const container = component.find('.rtex-is-open');
+  container.find('.rtex-option-item').at(1).simulate('click', {
+    nativeEvent: { stopImmediatePropagation: () => {} },
+  });
+  expect(inputComponent.prop('value')).toEqual('value 2');
+  const containerClosed = component.find('.rtex-is-open');
+  expect(containerClosed.length).toEqual(0);
+});

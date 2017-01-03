@@ -215,3 +215,28 @@ it('Typeahead should move selection for item when ArrowUp pressed', () => {
   const selectedItem1 = component.find('.rtex-is-open .rtex-option-selected');
   expect(selectedItem1.text()).toEqual('value 2');
 });
+
+it('Typeahead should show options on focus and hide options when <Esc> pressed', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <Typeahead
+      value="value 1"
+      showLoading
+      displayKey={'name'}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+
+  inputComponent.simulate('focus');
+  expect(component.find('.rtex-is-open').length).toEqual(1);
+
+  inputComponent.simulate('keyDown', { key: 'Esc' });
+  expect(component.find('.rtex-is-open').length).toEqual(0);
+});

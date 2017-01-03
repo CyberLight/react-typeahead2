@@ -6,6 +6,27 @@ import Typeahead from '../src/index';
 
 const { expect } = global;
 
+const SimpleOptionTemplate = (props) => {
+  const getStyle = () => {
+    if (props.selected) {
+      return {
+        backgroundColor: 'blue',
+        color: 'white',
+      };
+    }
+    return {};
+  };
+  return (
+    <div className="rtex-option-item" style={getStyle()}>
+      {props.data.name}
+    </div>);
+};
+
+SimpleOptionTemplate.propTypes = {
+  selected: React.PropTypes.bool,
+  data: React.PropTypes.object,
+};
+
 beforeEach(() => {
   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
 });
@@ -94,4 +115,27 @@ it('Typeahead should raise onChange when value changed', () => {
   const event = { target: { value: 'value changed' } };
   component.find('.rtex-input').at(0).simulate('change', event);
   expect(onChange.called).toBeTruthy();
+});
+
+it('Typeahead should show list of items when Down Arrow key presses', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <Typeahead
+      value="change"
+      showLoading
+      displayKey={'name'}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  component.find('.rtex-input').at(0).simulate('keyDown', { key: 'ArrowDown' });
+  const container = component.find('.rtex-is-open');
+  expect(container.length).toEqual(1);
+  const items = container.find('.rtex-option-item');
+  expect(items.length).toEqual(3);
 });

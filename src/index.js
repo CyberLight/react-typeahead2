@@ -345,6 +345,14 @@ class Typeahead extends PureComponent {
     );
   }
 
+  _getOptionClasses = (visible) => {
+    const defaultClasses = ['rtex-option-container'];
+    if (visible) {
+      defaultClasses.push('rtex-is-open');
+    }
+    return defaultClasses.join(' ');
+  }
+
   _renderOptions = () => {
     const dropdownVisible = this.state.dropdownVisible;
     const value = this.state.value;
@@ -353,7 +361,7 @@ class Typeahead extends PureComponent {
 
     return (
       <UlContainer
-        className={'rtex-option-container'}
+        className={this._getOptionClasses(dropdownVisible)}
         visible={dropdownVisible}
       >
         {

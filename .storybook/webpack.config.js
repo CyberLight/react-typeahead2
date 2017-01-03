@@ -4,8 +4,9 @@ const config = {
   module: {
     loaders: [
       {
-        test: /\.gif?$/,
-        loaders: ['url']
+        test: /\.(png|jpg|jpeg|gif|svg)$/,
+        loaders: ['url'],
+        include: path.resolve(__dirname, '../'),
       },
       {
         test: /\.css?$/,
@@ -16,16 +17,16 @@ const config = {
         test: /\.json?$/,
         loaders: ['json'],
         include: path.resolve(__dirname, '../'),
-      }
+      },
     ],
   },
   externals: {
-    'jsdom': 'window',
-    'cheerio': 'window',
+    jsdom: 'window',
+    cheerio: 'window',
     'react/lib/ExecutionEnvironment': true,
     'react/lib/ReactContext': 'window',
     'react/addons': true,
-  }
+  },
 };
 
 module.exports = config;

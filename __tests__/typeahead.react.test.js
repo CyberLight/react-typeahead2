@@ -35,14 +35,20 @@ SimpleOptionTemplate.propTypes = {
   data: React.PropTypes.object,
 };
 
+const documentEventsMap = {};
+
 beforeEach(() => {
   sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
+  sinon.stub(document, 'addEventListener', (event, cb) => {
+    documentEventsMap[event] = cb;
+  });
 });
 
 afterEach(() => {
   /* eslint-disable no-console */
   console.error.restore();
   /* eslint-enable no-console */
+  document.addEventListener.restore();
 });
 
 it('Typeahead should raise error on ignoring optionTemplate prop', () => {
@@ -447,4 +453,32 @@ test('Typeahead should select option by click on it', () => {
   expect(inputComponent.prop('value')).toEqual('value 2');
   const containerClosed = component.find('.rtex-is-open');
   expect(containerClosed.length).toEqual(0);
+});
+
+test('Typeahead should close option list if click on different div', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <div>
+      <Typeahead
+        value="valu"
+        showLoading
+        hint={false}
+        displayKey={'name'}
+        options={options}
+        optionTemplate={SimpleOptionTemplate}
+      />
+    </div>);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  expect(component.find('.rtex-is-open').length).toEqual(1);
+
+  documentEventsMap.click();
+
+  expect(component.find('.rtex-is-open').length).toEqual(0);
 });

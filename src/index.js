@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import _ from 'lodash';
 
 import SpinnerGif from './static/spinner.gif';
 import getDirection from './utils';
@@ -12,12 +11,17 @@ import UlContainer from './components/UlContainer';
 import LoadingImg from './components/LoadingImg';
 
 const defaultLoadingTemplate = props =>
-  (<LoadingImg src={SpinnerGif} height={props.height} dir={props.dir} visible={props.visible} />);
+  (<LoadingImg
+    src={SpinnerGif}
+    className={props.className}
+    height={props.height}
+    dir={props.dir}
+  />);
 
 defaultLoadingTemplate.propTypes = {
   height: React.PropTypes.number,
   dir: React.PropTypes.string,
-  visible: React.PropTypes.boolean,
+  className: React.PropTypes.string,
 };
 
 class Typeahead extends PureComponent {
@@ -29,7 +33,6 @@ class Typeahead extends PureComponent {
     hint: true,
     minLength: 1,
     showLoading: false,
-    debounceRate: 100,
     loadingTemplate: defaultLoadingTemplate,
     className: '',
   }
@@ -47,7 +50,6 @@ class Typeahead extends PureComponent {
     hint: React.PropTypes.bool,
     minLength: React.PropTypes.number,
     showLoading: React.PropTypes.bool,
-    debounceRate: React.PropTypes.number,
     value: React.PropTypes.string,
     className: React.PropTypes.string,
     options: React.PropTypes.array,
@@ -71,18 +73,16 @@ class Typeahead extends PureComponent {
   }
 
   componentDidMount() {
-    document.addEventListener('click', this._onDocActivate);
     const value = this.state.value;
-    this._onChange({ target: { value } });
-
-    if (value.length >= this.state.minLength) {
-      this._fetchDataHandler(value);
-    }
-
     const { clientHeight, clientWidth } = this._inputTypeAhead._input;
-
     this.clientHeight = clientHeight;
     this.clientWidth = clientWidth;
+    document.addEventListener('click', this._onDocActivate);
+    if (value) {
+      if (value.length >= this.state.minLength) {
+        this._fetchDataHandler(value);
+      }
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -177,11 +177,11 @@ class Typeahead extends PureComponent {
     }
   }
 
-  _fetchDataHandler = _.debounce((value) => {
+  _fetchDataHandler = (value) => {
     if (this.props.onFetchData) {
       this.props.onFetchData(value);
     }
-  }, this.props.debounceRate);
+  }
 
   _getOptionsCount = (options) => {
     return options && (options.length || options.size || 0);
@@ -299,9 +299,21 @@ class Typeahead extends PureComponent {
     }
   }
 
+  _renderSpinner = () => {
+    const LoadingTemplate = this.props.loadingTemplate;
+    if (this.state.showLoading) {
+      return (
+        <LoadingTemplate
+          className="rtex-spinner"
+          dir={this.state.direction}
+          height={this.state.height}
+        />);
+    }
+    return null;
+  }
+
   _renderInputs = () => {
     const value = this.state.value;
-    const LoadingTemplate = this.props.loadingTemplate;
 
     return (
       <TypeaheadDiv className="rtex-input-container">
@@ -328,12 +340,7 @@ class Typeahead extends PureComponent {
           onKeyDown={this._onKeyDown}
           className={`rtex-input ${this.props.className}`}
         />
-        <LoadingTemplate
-          className="rtex-default-spinner"
-          dir={this.state.direction}
-          height={this.state.height}
-          visible={this.state.showLoading}
-        />
+        { this._renderSpinner() }
       </TypeaheadDiv>
     );
   }

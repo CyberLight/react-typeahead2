@@ -482,3 +482,58 @@ test('Typeahead should close option list if click on different div', () => {
 
   expect(component.find('.rtex-is-open').length).toEqual(0);
 });
+
+test('Typeahead should move spinner to left for RTL when chnage event raised', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  sinon.stub(window, 'getComputedStyle', () => ({ direction: 'rtl' }));
+
+  const component = mount(
+    <div>
+      <Typeahead
+        value="valu"
+        showLoading
+        hint={false}
+        displayKey={'name'}
+        options={options}
+        optionTemplate={SimpleOptionTemplate}
+      />
+    </div>);
+  const event = { target: { value: 'value changed' } };
+  component.find('.rtex-input').at(0).simulate('change', event);
+
+  window.getComputedStyle.restore();
+
+  expect(component.find('.rtex-spinner').prop('dir')).toEqual('rtl');
+});
+
+
+test('Typeahead should move spinner to left for RTL when new props sets', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  sinon.stub(window, 'getComputedStyle', () => ({ direction: 'rtl' }));
+
+  const component = mount(
+    <Typeahead
+      value="valu"
+      showLoading
+      hint={false}
+      displayKey={'name'}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  component.setProps({ value: 'value 1' });
+
+  window.getComputedStyle.restore();
+
+  expect(component.find('.rtex-spinner').prop('dir')).toEqual('rtl');
+});

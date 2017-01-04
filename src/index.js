@@ -166,6 +166,7 @@ class Typeahead extends PureComponent {
       selectedIndex: -1,
       dropdownVisible: hasOptions,
       hint,
+      direction: dir,
     });
 
     if (this.props.onChange) {

@@ -537,3 +537,65 @@ test('Typeahead should move spinner to left for RTL when new props sets', () => 
 
   expect(component.find('.rtex-spinner').prop('dir')).toEqual('rtl');
 });
+
+test('Typeahead should set default value for minLength', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <Typeahead
+      value=""
+      showLoading
+      hint={false}
+      displayKey={'name'}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  expect(component.prop('minLength')).toEqual(1);
+});
+
+test('Typeahead should raise Fetch event if value >= minLength', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const onFetchData = sinon.spy();
+
+  const component = mount(
+    <Typeahead
+      value=""
+      showLoading
+      hint={false}
+      displayKey={'name'}
+      minLength={4}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+      onFetchData={onFetchData}
+    />);
+
+  const event = { target: { value: 'v' } };
+  component.find('.rtex-input').at(0).simulate('change', event);
+
+  expect(onFetchData.callCount).toEqual(0);
+
+  const event2 = { target: { value: 'val' } };
+  component.find('.rtex-input').at(0).simulate('change', event2);
+
+  expect(onFetchData.callCount).toEqual(0);
+
+  const event3 = { target: { value: 'valu' } };
+  component.find('.rtex-input').at(0).simulate('change', event3);
+
+  expect(onFetchData.callCount).toEqual(1);
+
+  const event4 = { target: { value: 'value' } };
+  component.find('.rtex-input').at(0).simulate('change', event4);
+
+  expect(onFetchData.callCount).toEqual(2);
+});

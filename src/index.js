@@ -50,6 +50,7 @@ class Typeahead extends PureComponent {
     rateLimitWait: 100,
     showEmpty: false,
     emptyVisible: false,
+    placeholder: '',
   }
 
   static propTypes = {
@@ -72,6 +73,7 @@ class Typeahead extends PureComponent {
     rateLimitBy: React.PropTypes.oneOf(['none', 'trottle', 'debounce']),
     rateLimitWait: React.PropTypes.number,
     showEmpty: React.PropTypes.bool,
+    placeholder: React.PropTypes.string,
   }
 
   constructor(props) {
@@ -92,6 +94,7 @@ class Typeahead extends PureComponent {
       rateLimitWait: props.rateLimitWait,
       emptyVisible: false,
       showEmpty: props.showEmpty,
+      placeholder: props.placeholder,
       _debounceFetchHandler: debounce(this._defaultFetchHandler, props.rateLimitWait),
       _trottleFetchHandler: trottle(this._defaultFetchHandler, props.rateLimitWait),
     };
@@ -135,6 +138,7 @@ class Typeahead extends PureComponent {
       rateLimitBy: nextProps.rateLimitBy,
       rateLimitWait: nextProps.rateLimitWait,
       showEmpty: nextProps.showEmpty,
+      placeholder: nextProps.placeholder,
       _debounceFetchHandler: debounce(this._defaultFetchHandler, nextProps.rateLimitWait),
       _trottleFetchHandler: trottle(this._defaultFetchHandler, nextProps.rateLimitWait),
     });
@@ -364,6 +368,13 @@ class Typeahead extends PureComponent {
     return null;
   }
 
+  _getInputPlaceHolder = (hintValue) => {
+    if (hintValue) {
+      return '';
+    }
+    return this.state.placeholder;
+  }
+
   _renderInputs = () => {
     const value = this.state.value;
 
@@ -381,6 +392,7 @@ class Typeahead extends PureComponent {
           role="combobox"
           aria-expanded="true"
           aria-autocomplete="both"
+          placeholder={this._getInputPlaceHolder(this.state.hintValue)}
           value={value}
           spellCheck={false}
           autoComplete={false}

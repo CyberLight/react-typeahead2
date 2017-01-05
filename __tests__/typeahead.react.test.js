@@ -943,3 +943,51 @@ test('Typeahead check close empty template by click outside of component', () =>
 
   expect(component.find('.rtex-is-open .rtex-empty').length).toEqual(0);
 });
+
+test('Typeahead check showing placeholder', () => {
+  const PlaceholderText = 'Placeholder for input';
+  const component = mount(
+    <Typeahead
+      value=""
+      hint={false}
+      displayKey={'name'}
+      minLength={4}
+      options={[]}
+      optionTemplate={SimpleOptionTemplate}
+      rateLimitBy={'none'}
+      showEmpty
+      placeholder={PlaceholderText}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  expect(inputComponent.prop('placeholder')).toEqual(PlaceholderText);
+});
+
+test('Typeahead check not showing placeholder if hint value present', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const PlaceholderText = 'Placeholder for input';
+  const component = mount(
+    <Typeahead
+      value="valu"
+      hint
+      displayKey={'name'}
+      minLength={4}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+      rateLimitBy={'none'}
+      placeholder={PlaceholderText}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+
+  const hintComponent = component.find('.rtex-hint').at(0);
+  expect(hintComponent.prop('value')).toEqual('value 1');
+
+  expect(component.find('.rtex-input').at(0).prop('placeholder')).toEqual('');
+});

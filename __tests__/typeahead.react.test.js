@@ -599,3 +599,43 @@ test('Typeahead should raise Fetch event if value >= minLength', () => {
 
   expect(onFetchData.callCount).toEqual(2);
 });
+
+test('Typeahead should receive rateLimitBy types ["none", "trottle", "debounce"]', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <Typeahead
+      value=""
+      showLoading
+      hint={false}
+      displayKey={'name'}
+      minLength={4}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  expect(component.prop('rateLimitBy')).toEqual('none');
+
+  expect(() => {
+    component.setProps({ rateLimitBy: 'trottle' });
+  }).not.toThrow();
+  expect(component.prop('rateLimitBy')).toEqual('trottle');
+
+  expect(() => {
+    component.setProps({ rateLimitBy: 'debounce' });
+  }).not.toThrow();
+  expect(component.prop('rateLimitBy')).toEqual('debounce');
+
+  expect(() => {
+    component.setProps({ rateLimitBy: 'none' });
+  }).not.toThrow();
+  expect(component.prop('rateLimitBy')).toEqual('none');
+
+  expect(() => {
+    component.setProps({ rateLimitBy: 'unknown' });
+  }).toThrowError(/Invalid prop `rateLimitBy` of value `unknown`/);
+});

@@ -36,6 +36,7 @@ class Typeahead extends PureComponent {
     loadingTemplate: defaultLoadingTemplate,
     className: '',
     rateLimitBy: 'none',
+    rateLimitWait: 0,
   }
 
   static propTypes = {
@@ -55,6 +56,7 @@ class Typeahead extends PureComponent {
     className: React.PropTypes.string,
     options: React.PropTypes.array,
     rateLimitBy: React.PropTypes.oneOf(['none', 'trottle', 'debounce']),
+    rateLimitWait: React.PropTypes.number,
   }
 
   constructor(props) {
@@ -72,6 +74,7 @@ class Typeahead extends PureComponent {
       width: 0,
       height: 0,
       rateLimitBy: props.rateLimitBy,
+      rateLimitWait: props.rateLimitWait,
     };
   }
 
@@ -111,6 +114,7 @@ class Typeahead extends PureComponent {
       width: this.clientWidth,
       height: this.clientHeight,
       rateLimitBy: nextProps.rateLimitBy,
+      rateLimitWait: nextProps.rateLimitWait,
     });
   }
 

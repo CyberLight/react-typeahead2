@@ -610,7 +610,6 @@ test('Typeahead should receive rateLimitBy types ["none", "trottle", "debounce"]
   const component = mount(
     <Typeahead
       value=""
-      showLoading
       hint={false}
       displayKey={'name'}
       minLength={4}
@@ -638,4 +637,28 @@ test('Typeahead should receive rateLimitBy types ["none", "trottle", "debounce"]
   expect(() => {
     component.setProps({ rateLimitBy: 'unknown' });
   }).toThrowError(/Invalid prop `rateLimitBy` of value `unknown`/);
+});
+
+test('Typeahead should set rateLimitWait as number', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const component = mount(
+    <Typeahead
+      value=""
+      hint={false}
+      displayKey={'name'}
+      minLength={4}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  expect(component.prop('rateLimitWait')).toEqual(0);
+
+  expect(() => {
+    component.setProps({ rateLimitWait: '100' });
+  }).toThrowError(/Invalid prop `rateLimitWait` of type `string`/);
 });

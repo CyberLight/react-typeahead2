@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import debounce from 'lodash.debounce';
 import trottle from 'lodash.throttle';
+import styled from 'styled-components';
 
 import SpinnerGif from './static/spinner.gif';
 import getDirection from './utils';
@@ -11,6 +12,11 @@ import TypeaheadDiv from './components/TypeaheadDiv';
 import TypeaheadContainer from './components/TypeaheadContainer';
 import UlContainer from './components/UlContainer';
 import LoadingImg from './components/LoadingImg';
+
+const EmptyDefaultTemplate = styled.div`
+  text-align: center;
+  font-weight: bold;
+`;
 
 const defaultLoadingTemplate = props =>
   (<LoadingImg
@@ -26,6 +32,8 @@ defaultLoadingTemplate.propTypes = {
   className: React.PropTypes.string,
 };
 
+const EmptyTemplate = () => (<EmptyDefaultTemplate>No items</EmptyDefaultTemplate>);
+
 class Typeahead extends PureComponent {
 
   static defaultProps = {
@@ -36,13 +44,16 @@ class Typeahead extends PureComponent {
     minLength: 1,
     showLoading: false,
     loadingTemplate: defaultLoadingTemplate,
+    emptyTemplate: EmptyTemplate,
     className: '',
     rateLimitBy: 'none',
     rateLimitWait: 100,
+    showEmpty: false,
   }
 
   static propTypes = {
     optionTemplate: React.PropTypes.func.isRequired,
+    emptyTemplate: React.PropTypes.func,
     loadingTemplate: React.PropTypes.func,
     onChange: React.PropTypes.func,
     onFetchData: React.PropTypes.func,
@@ -59,6 +70,7 @@ class Typeahead extends PureComponent {
     options: React.PropTypes.array,
     rateLimitBy: React.PropTypes.oneOf(['none', 'trottle', 'debounce']),
     rateLimitWait: React.PropTypes.number,
+    showEmpty: React.PropTypes.bool,
   }
 
   constructor(props) {
@@ -77,6 +89,7 @@ class Typeahead extends PureComponent {
       height: 0,
       rateLimitBy: props.rateLimitBy,
       rateLimitWait: props.rateLimitWait,
+      showEmpty: props.showEmpty,
       _debounceFetchHandler: debounce(this._defaultFetchHandler, props.rateLimitWait),
       _trottleFetchHandler: trottle(this._defaultFetchHandler, props.rateLimitWait),
     };
@@ -119,6 +132,7 @@ class Typeahead extends PureComponent {
       height: this.clientHeight,
       rateLimitBy: nextProps.rateLimitBy,
       rateLimitWait: nextProps.rateLimitWait,
+      showEmpty: nextProps.showEmpty,
       _debounceFetchHandler: debounce(this._defaultFetchHandler, nextProps.rateLimitWait),
       _trottleFetchHandler: trottle(this._defaultFetchHandler, nextProps.rateLimitWait),
     });
@@ -252,6 +266,7 @@ class Typeahead extends PureComponent {
       case 'Escape': {
         this.setState({
           dropdownVisible: false,
+          showEmpty: false,
           hintValue: '',
         });
         break;
@@ -416,6 +431,23 @@ class Typeahead extends PureComponent {
     );
   }
 
+  _renderEmpty = () => {
+    const EmptyOptionTemplate = this.props.emptyTemplate;
+    if (this.state.showEmpty && !this.state.dropdownVisible) {
+      return (
+        <UlContainer
+          className="rtex-option-container rtex-is-open rtex-empty"
+          visible
+        >
+          <LiContainer>
+            <EmptyOptionTemplate />
+          </LiContainer>
+        </UlContainer>
+      );
+    }
+    return null;
+  }
+
   render() {
     return (
       <TypeaheadContainer
@@ -423,6 +455,7 @@ class Typeahead extends PureComponent {
         className="rtex-container"
       >
         {this._renderInputs()}
+        {this._renderEmpty()}
         {this._renderOptions()}
       </TypeaheadContainer>
     );

@@ -656,9 +656,116 @@ test('Typeahead should set rateLimitWait as number', () => {
       optionTemplate={SimpleOptionTemplate}
     />);
 
-  expect(component.prop('rateLimitWait')).toEqual(0);
+  // check default value
+  expect(component.prop('rateLimitWait')).toEqual(100);
 
   expect(() => {
     component.setProps({ rateLimitWait: '100' });
   }).toThrowError(/Invalid prop `rateLimitWait` of type `string`/);
+});
+
+test('Typeahead check debounce rateLimitBy', (done) => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const onFetchData = sinon.spy();
+
+  const component = mount(
+    <Typeahead
+      value=""
+      hint={false}
+      displayKey={'name'}
+      minLength={4}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+      rateLimitBy={'debounce'}
+      onFetchData={onFetchData}
+    />);
+
+  const typeData = 'value 1 testing debounce';
+  for (let i = 1; i < (typeData.length - 1); i += 1) {
+    const event = { target: { value: typeData.substring(0, i) } };
+    component.find('.rtex-input').at(0).simulate('change', event);
+  }
+
+  setTimeout(() => {
+    try {
+      expect(onFetchData.callCount).toEqual(1);
+      done();
+    } catch (e) {
+      done.fail(e);
+    }
+  }, 101);
+});
+
+
+test('Typeahead check trottle rateLimitBy', (done) => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const onFetchData = sinon.spy();
+
+  const component = mount(
+    <Typeahead
+      value=""
+      hint={false}
+      displayKey={'name'}
+      minLength={4}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+      rateLimitBy={'trottle'}
+      onFetchData={onFetchData}
+    />);
+
+  const typeData = 'value 1 testing !';
+  for (let i = 1; i < (typeData.length - 1); i += 1) {
+    const event = { target: { value: typeData.substring(0, i) } };
+    component.find('.rtex-input').at(0).simulate('change', event);
+  }
+
+  setTimeout(() => {
+    try {
+      expect(onFetchData.callCount).toEqual(3);
+      done();
+    } catch (e) {
+      done.fail(e);
+    }
+  }, 101);
+});
+
+
+test('Typeahead check "none" rateLimitBy', () => {
+  const options = [
+    { id: 1, name: 'value 1' },
+    { id: 2, name: 'value 2' },
+    { id: 3, name: 'value 3' },
+  ];
+
+  const onFetchData = sinon.spy();
+
+  const component = mount(
+    <Typeahead
+      value=""
+      hint={false}
+      displayKey={'name'}
+      minLength={4}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+      rateLimitBy={'none'}
+      onFetchData={onFetchData}
+    />);
+
+  const typeData = 'value 1 testing!';
+  const input = component.find('.rtex-input').at(0);
+  for (let i = 0, len = typeData.length; i < len; i += 1) {
+    input.simulate('change', { target: { value: typeData.substring(0, i) } });
+  }
+
+  expect(onFetchData.callCount).toEqual(12);
 });

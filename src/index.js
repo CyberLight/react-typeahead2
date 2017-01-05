@@ -1,4 +1,6 @@
 import React, { PureComponent } from 'react';
+import debounce from 'lodash.debounce';
+import trottle from 'lodash.throttle';
 
 import SpinnerGif from './static/spinner.gif';
 import getDirection from './utils';
@@ -36,7 +38,7 @@ class Typeahead extends PureComponent {
     loadingTemplate: defaultLoadingTemplate,
     className: '',
     rateLimitBy: 'none',
-    rateLimitWait: 0,
+    rateLimitWait: 100,
   }
 
   static propTypes = {
@@ -75,6 +77,8 @@ class Typeahead extends PureComponent {
       height: 0,
       rateLimitBy: props.rateLimitBy,
       rateLimitWait: props.rateLimitWait,
+      _debounceFetchHandler: debounce(this._defaultFetchHandler, props.rateLimitWait),
+      _trottleFetchHandler: trottle(this._defaultFetchHandler, props.rateLimitWait),
     };
   }
 
@@ -115,6 +119,8 @@ class Typeahead extends PureComponent {
       height: this.clientHeight,
       rateLimitBy: nextProps.rateLimitBy,
       rateLimitWait: nextProps.rateLimitWait,
+      _debounceFetchHandler: debounce(this._defaultFetchHandler, nextProps.rateLimitWait),
+      _trottleFetchHandler: trottle(this._defaultFetchHandler, nextProps.rateLimitWait),
     });
   }
 
@@ -186,10 +192,20 @@ class Typeahead extends PureComponent {
     }
   }
 
-  _fetchDataHandler = (value) => {
+  _defaultFetchHandler = (value) => {
     if (this.props.onFetchData) {
       this.props.onFetchData(value);
     }
+  }
+
+  _fetchDataHandler = (value) => {
+    const funcMapping = {
+      none: this._defaultFetchHandler,
+      debounce: this.state._debounceFetchHandler,
+      trottle: this.state._trottleFetchHandler,
+    };
+
+    funcMapping[this.props.rateLimitBy](value);
   }
 
   _getOptionsCount = (options) => {

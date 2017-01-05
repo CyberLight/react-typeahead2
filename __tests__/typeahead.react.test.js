@@ -785,6 +785,9 @@ test('Typeahead check showEmpty', () => {
       showEmpty
     />);
 
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('focus');
+
   const emptyContainer = component.find('.rtex-is-open .rtex-empty');
   expect(emptyContainer.length).toEqual(1);
   expect(emptyContainer.text()).toEqual('No items');
@@ -812,6 +815,9 @@ test('Typeahead check showEmpty with custom template', () => {
       showEmpty
     />);
 
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('focus');
+
   const emptyContainer = component.find('.rtex-is-open .rtex-empty');
   expect(emptyContainer.length).toEqual(1);
   expect(emptyContainer.text()).toEqual('Custom empty template');
@@ -834,9 +840,12 @@ test('Typeahead check hide empty custom template with <Esc>', () => {
       showEmpty
     />);
 
+  let inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('focus');
+
   expect(component.find('.rtex-is-open .rtex-empty').length).toEqual(1);
 
-  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent = component.find('.rtex-input').at(0);
   inputComponent.simulate('keyDown', { key: 'Esc' });
 
   expect(component.find('.rtex-is-open .rtex-empty').length).toEqual(0);
@@ -867,4 +876,70 @@ test('Typeahead check not show empty template if items present', () => {
 
   expect(component.find('.rtex-is-open .rtex-empty').length).toEqual(0);
   expect(component.find('.rtex-is-open').length).toEqual(1);
+});
+
+test('Typeahead check show template with <DownArrow>', () => {
+  const component = mount(
+    <Typeahead
+      value=""
+      hint={false}
+      displayKey={'name'}
+      minLength={4}
+      options={[]}
+      optionTemplate={SimpleOptionTemplate}
+      rateLimitBy={'none'}
+      showEmpty
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  expect(component.find('.rtex-is-open .rtex-empty').length).toEqual(1);
+
+  inputComponent.simulate('keyDown', { key: 'Esc' });
+  expect(component.find('.rtex-is-open .rtex-empty').length).toEqual(0);
+
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  expect(component.find('.rtex-is-open .rtex-empty').length).toEqual(1);
+});
+
+test('Typeahead check show template on focused input', () => {
+  const component = mount(
+    <Typeahead
+      value=""
+      hint={false}
+      displayKey={'name'}
+      minLength={4}
+      options={[]}
+      optionTemplate={SimpleOptionTemplate}
+      rateLimitBy={'none'}
+      showEmpty
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+
+  inputComponent.simulate('focus');
+  expect(component.find('.rtex-is-open .rtex-empty').length).toEqual(1);
+});
+
+test('Typeahead check close empty template by click outside of component', () => {
+  const component = mount(
+    <Typeahead
+      value=""
+      hint={false}
+      displayKey={'name'}
+      minLength={4}
+      options={[]}
+      optionTemplate={SimpleOptionTemplate}
+      rateLimitBy={'none'}
+      showEmpty
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+
+  inputComponent.simulate('focus');
+  expect(component.find('.rtex-is-open .rtex-empty').length).toEqual(1);
+
+  documentEventsMap.click();
+
+  expect(component.find('.rtex-is-open .rtex-empty').length).toEqual(0);
 });

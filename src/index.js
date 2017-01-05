@@ -49,6 +49,7 @@ class Typeahead extends PureComponent {
     rateLimitBy: 'none',
     rateLimitWait: 100,
     showEmpty: false,
+    emptyVisible: false,
   }
 
   static propTypes = {
@@ -89,6 +90,7 @@ class Typeahead extends PureComponent {
       height: 0,
       rateLimitBy: props.rateLimitBy,
       rateLimitWait: props.rateLimitWait,
+      emptyVisible: false,
       showEmpty: props.showEmpty,
       _debounceFetchHandler: debounce(this._defaultFetchHandler, props.rateLimitWait),
       _trottleFetchHandler: trottle(this._defaultFetchHandler, props.rateLimitWait),
@@ -160,13 +162,16 @@ class Typeahead extends PureComponent {
   _onDocActivate = () => {
     this.setState({
       dropdownVisible: false,
+      emptyVisible: false,
     });
   }
 
   _onFocus = () => {
     const hasOptions = (this._getOptionsCount(this.props.options) > 0);
+
     this.setState({
       dropdownVisible: hasOptions,
+      emptyVisible: (this.state.showEmpty && !hasOptions),
     });
   }
 
@@ -266,7 +271,7 @@ class Typeahead extends PureComponent {
       case 'Escape': {
         this.setState({
           dropdownVisible: false,
-          showEmpty: false,
+          emptyVisible: false,
           hintValue: '',
         });
         break;
@@ -331,6 +336,12 @@ class Typeahead extends PureComponent {
           this.setState({
             selectedIndex: newIndex,
             hintValue: (hint ? this._getHint(value, nextValue) : ''),
+          });
+        }
+
+        if (this.state.showEmpty && !this.state.emptyVisible) {
+          this.setState({
+            emptyVisible: true,
           });
         }
         break;
@@ -433,7 +444,8 @@ class Typeahead extends PureComponent {
 
   _renderEmpty = () => {
     const EmptyOptionTemplate = this.props.emptyTemplate;
-    if (this.state.showEmpty && !this.state.dropdownVisible) {
+    if (!this.state.dropdownVisible &&
+        (this.state.showEmpty && this.state.emptyVisible)) {
       return (
         <UlContainer
           className="rtex-option-container rtex-is-open rtex-empty"

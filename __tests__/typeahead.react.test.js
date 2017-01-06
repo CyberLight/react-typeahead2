@@ -1,6 +1,7 @@
 import React from 'react';
 import sinon from 'sinon';
 import { mount } from 'enzyme';
+import Immutable from 'immutable';
 
 import Typeahead from '../src/index';
 
@@ -171,6 +172,8 @@ it('Typeahead should move selection for item when ArrowDown pressed', () => {
     />);
 
   const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('focus');
+
   inputComponent.simulate('keyDown', { key: 'ArrowDown' });
   const selectedItem1 = component.find('.rtex-is-open .rtex-option-selected');
   expect(selectedItem1.text()).toEqual('value 1');
@@ -205,6 +208,8 @@ it('Typeahead should move selection for item when ArrowUp pressed', () => {
     />);
 
   const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('focus');
+
   inputComponent.simulate('keyDown', { key: 'ArrowUp' });
   const selectedItem2 = component.find('.rtex-is-open .rtex-option-selected');
   expect(selectedItem2.text()).toEqual('value 2');
@@ -289,6 +294,8 @@ test('Typeahead should show hint for value', () => {
     />);
 
   const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('focus');
+
   inputComponent.simulate('keyDown', { key: 'ArrowDown' });
   const hintComponent = component.find('.rtex-hint').at(0);
   expect(hintComponent.prop('value')).toEqual('value 1');
@@ -342,6 +349,7 @@ test('Typeahead should autocomplete by press <Tab> by hint for value', () => {
     />);
 
   const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('focus');
   inputComponent.simulate('keyDown', { key: 'ArrowDown' });
   inputComponent.simulate('keyDown', { key: 'ArrowDown' });
   const hintComponent = component.find('.rtex-hint').at(0);
@@ -367,6 +375,7 @@ test('Typeahead should autocomplete by press <End> by hint for value', () => {
     />);
 
   const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('focus');
   inputComponent.simulate('keyDown', { key: 'ArrowDown' });
   inputComponent.simulate('keyDown', { key: 'ArrowDown' });
   const hintComponent = component.find('.rtex-hint').at(0);
@@ -984,10 +993,108 @@ test('Typeahead check not showing placeholder if hint value present', () => {
     />);
 
   const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('focus');
   inputComponent.simulate('keyDown', { key: 'ArrowDown' });
 
   const hintComponent = component.find('.rtex-hint').at(0);
   expect(hintComponent.prop('value')).toEqual('value 1');
 
   expect(component.find('.rtex-input').at(0).prop('placeholder')).toEqual('');
+});
+
+test('Typeahead should work with Immutable Record', () => {
+  const Item = Immutable.Record({ id: 0, name: '' });
+  const options = Immutable.List([
+    new Item({ id: 1, name: 'value 1' }),
+    new Item({ id: 2, name: 'value 2' }),
+    new Item({ id: 3, name: 'value 3' }),
+  ]);
+
+  const PlaceholderText = 'Placeholder for input';
+  const component = mount(
+    <Typeahead
+      value=""
+      hint
+      displayKey={'name'}
+      minLength={4}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+      rateLimitBy={'none'}
+      placeholder={PlaceholderText}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+
+  expect(component.find('.rtex-option-item').length).toEqual(3);
+});
+
+test('Typeahead should select item of Immutable Record', () => {
+  const Item = Immutable.Record({ id: 0, name: '' });
+  const options = Immutable.List([
+    new Item({ id: 1, name: 'value 1' }),
+    new Item({ id: 2, name: 'value 2' }),
+    new Item({ id: 3, name: 'value 3' }),
+  ]);
+
+  const PlaceholderText = 'Placeholder for input';
+  const component = mount(
+    <Typeahead
+      value=""
+      hint
+      displayKey={'name'}
+      minLength={4}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+      rateLimitBy={'none'}
+      placeholder={PlaceholderText}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  inputComponent.simulate('focus');
+
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  const selectedItem = component.find('.rtex-option-item .rtex-option-selected');
+  expect(selectedItem.text()).toEqual('value 1');
+
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  const selectedItem2 = component.find('.rtex-option-item .rtex-option-selected');
+  expect(selectedItem2.text()).toEqual('value 2');
+
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  const selectedItem3 = component.find('.rtex-option-item .rtex-option-selected');
+  expect(selectedItem3.text()).toEqual('value 3');
+});
+
+test('Typeahead should choose item of Immutable Record by press <Enter>', () => {
+  const Item = Immutable.Record({ id: 0, name: '' });
+  const options = Immutable.List([
+    new Item({ id: 1, name: 'value 1' }),
+    new Item({ id: 2, name: 'value 2' }),
+    new Item({ id: 3, name: 'value 3' }),
+  ]);
+
+  const PlaceholderText = 'Placeholder for input';
+  const component = mount(
+    <Typeahead
+      value=""
+      hint
+      displayKey={'name'}
+      minLength={4}
+      options={options}
+      optionTemplate={SimpleOptionTemplate}
+      rateLimitBy={'none'}
+      placeholder={PlaceholderText}
+    />);
+
+  const inputComponent = component.find('.rtex-input').at(0);
+  expect(inputComponent.prop('value')).toEqual('');
+  inputComponent.simulate('focus');
+
+  inputComponent.simulate('keyDown', { key: 'ArrowDown' });
+  const selectedItem = component.find('.rtex-option-item .rtex-option-selected');
+  expect(selectedItem.text()).toEqual('value 1');
+
+  inputComponent.simulate('keyDown', { key: 'Enter' });
+  expect(component.find('.rtex-input').at(0).prop('value')).toEqual('value 1');
 });

@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import debounce from 'lodash.debounce';
 import trottle from 'lodash.throttle';
 import styled from 'styled-components';
+import Immutable from 'immutable';
 
 import SpinnerGif from './static/spinner.gif';
 import getDirection from './utils';
@@ -69,7 +70,10 @@ class Typeahead extends PureComponent {
     showLoading: React.PropTypes.bool,
     value: React.PropTypes.string,
     className: React.PropTypes.string,
-    options: React.PropTypes.array,
+    options: React.PropTypes.oneOfType([
+      React.PropTypes.array,
+      React.PropTypes.instanceOf(Immutable.List),
+    ]),
     rateLimitBy: React.PropTypes.oneOf(['none', 'trottle', 'debounce']),
     rateLimitWait: React.PropTypes.number,
     showEmpty: React.PropTypes.bool,
@@ -149,12 +153,19 @@ class Typeahead extends PureComponent {
   }
 
   _getValueByIndex = (options, index, displayKey) => {
-    const value = (options &&
+    if (Immutable.List.isList(options)) {
+      return (options &&
+             options.size &&
+             options.get(index) &&
+             options.get(index)[displayKey]) ||
+             this.state.value;
+    }
+
+    return (options &&
            options.length &&
            options[index] &&
            options[index][displayKey]) ||
            this.state.value;
-    return value;
   }
 
   _getSelectedIndex = (options, index) => {
@@ -235,13 +246,21 @@ class Typeahead extends PureComponent {
     return options && (options.length || options.size || 0);
   }
 
+  _getOption = (options, index) => {
+    if (Immutable.List.isList(options)) {
+      return options.get(index);
+    }
+    return options[index];
+  }
+
   _optionClick = (index) => {
     const options = this.state.options;
     const displayKey = this.props.displayKey;
 
     if (this.props.onOptionClick) {
-      this.props.onOptionClick(options[index], index);
-      this.props.onOptionChange(options[index], index);
+      const option = this._getOption(options, index);
+      this.props.onOptionClick(option, index);
+      this.props.onOptionChange(option, index);
     }
 
     this.setState({
@@ -324,11 +343,9 @@ class Typeahead extends PureComponent {
 
         if (!dropdownVisible &&
              (options && len > 0)) {
-          const newIndex = calcIndex(len, selectedIndex);
-          const nextValue = this._getValueByIndex(options, newIndex, displayKey);
+          const nextValue = this._getValueByIndex(options, selectedIndex, displayKey);
           this.setState({
             dropdownVisible: true,
-            selectedIndex: newIndex,
             hintValue: (hint ? this._getHint(value, nextValue) : ''),
           });
         }
@@ -336,7 +353,7 @@ class Typeahead extends PureComponent {
         if (dropdownVisible &&
            (options && len > 0)) {
           const newIndex = calcIndex(len, selectedIndex);
-          const nextValue = options[newIndex][displayKey];
+          const nextValue = this._getValueByIndex(options, newIndex, displayKey);
           this.setState({
             selectedIndex: newIndex,
             hintValue: (hint ? this._getHint(value, nextValue) : ''),

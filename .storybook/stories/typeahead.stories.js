@@ -324,7 +324,7 @@ storiesOf('Presentation UI', module)
           <TestWrapper
             options={[]}
             allData={[]}
-            value={'How'}
+            value={''}
             enableShowLoading
             debounceRate={1000}
             optionTemplate={TwitterTemplate}

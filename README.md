@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/CyberLight/react-typeahead2.svg?branch=master)](https://travis-ci.org/CyberLight/react-typeahead2)
 [![npm version](https://badge.fury.io/js/react-typeahead2.svg)](https://badge.fury.io/js/react-typeahead2)
+[![Build status](https://ci.appveyor.com/api/projects/status/1xl417l6f3u3eqlf?svg=true)](https://ci.appveyor.com/project/CyberLight/react-typeahead2)
 
 React Typeahead2 component like an Twitter typeahead
 

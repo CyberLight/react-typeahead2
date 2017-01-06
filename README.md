@@ -6,6 +6,9 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/1xl417l6f3u3eqlf?svg=true)](https://ci.appveyor.com/project/CyberLight/react-typeahead2)
 [![AppVeyor](https://img.shields.io/appveyor/ci/CyberLight/react-typeahead2/master.svg?style=flat-square&label=windows)](https://ci.appveyor.com/project/CyberLight/react-typeahead2/branch/master)
 [![npm downloads](https://img.shields.io/npm/dm/react-typeahead2.svg?style=flat-square)](https://www.npmjs.com/package/react-typeahead2)
+[![Gitter Chat](http://img.shields.io/badge/chat-online-brightgreen.svg)](https://gitter.im/react-typeahead2)
+
+[![NPM](https://nodei.co/npm/react-typeahead2.png)](https://nodei.co/npm/react-typeahead2/)
 
 React Typeahead2 component like an Twitter typeahead
 

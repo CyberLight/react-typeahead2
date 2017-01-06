@@ -71,6 +71,13 @@
     box-shadow: 0 5px 10px rgba(0,0,0,.2);
 }
 
+.TwitterStylePage .EmptyItem {
+  position: relative;
+  padding: 10px;
+  font-size: 24px;
+  line-height: 30px;
+  text-align: center;
+}
 
 /*.rtex-input-container
 

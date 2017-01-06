@@ -6,38 +6,39 @@ import Typeahead from '../../src/index';
 
 class DataLoader {
   static getData(data) {
-      let _status = (response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return response
-        } else {
-          var error = new Error(response.statusText)
-          error.response = response
-          throw error;
-        }
-      };
+    const _status = (response) => {
+      if (response.status >= 200 && response.status < 300) {
+        return response;
+      }
 
-      return new Promise((resolve, reject) => {
-          const URL = `https://typeahead-js-twitter-api-proxy.herokuapp.com/demo/search?q=${data}`
-          let options = {
-            method: 'GET'
-          };
-          fetch(URL, options).
-          then(this._status).
-          then(r => r.json()).
-          then(resolve).
-          catch(reject);
-      });
+      const error = new Error(response.statusText);
+      error.response = response;
+      throw error;
+    };
+
+    return new Promise((resolve, reject) => {
+      const URL = `https://typeahead-js-twitter-api-proxy.herokuapp.com/demo/search?q=${data}`;
+      const options = {
+        method: 'GET',
+      };
+      fetch(URL, options)
+      .then(_status)
+      .then(r => r.json())
+      .then(resolve)
+      .catch(reject);
+    });
   }
 }
 
 class TestWrapper extends PureComponent {
-  constructor(props){
-      super(props);
-      this.state = {
-        options: props.options,
-        value: props.value,
-        enableShowLoading: props.enableShowLoading
-      }
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      options: props.options,
+      value: props.value,
+      enableShowLoading: props.enableShowLoading,
+    }
   }
 
   componentWillReceiveProps(nextProps){
@@ -49,40 +50,40 @@ class TestWrapper extends PureComponent {
   }
 
   _onChange = (e) => {
-      var value = e.target.value;
-      this.setState({
-        value: value
-      });
+    const value = e.target.value;
+    this.setState({
+      value,
+    });
   }
 
   _onFetchData = async (value) => {
-    var allData = this.props.allData;
+    const allData = this.props.allData;
 
-    if(this.state.enableShowLoading){
+    if (this.state.enableShowLoading) {
       this.setState({
-        showLoading: true
+        showLoading: true,
       });
-      let response = await DataLoader.getData(value);
+      const response = await DataLoader.getData(value);
       this.setState({
         showLoading: false,
         value: this.state.value,
-        options: Array.from(response.slice(0,5))
+        options: Array.from(response.slice(0, 5)),
       });
     } else {
       this.setState({
         showLoading: false,
         value: this.state.value,
         options: Array.from(
-          allData.filter(x => x.name.toLowerCase().indexOf(value.toLowerCase()) >= 0).slice(0,5))
+          allData.filter(x => x.name.toLowerCase().indexOf(value.toLowerCase()) >= 0).slice(0, 5)),
       });
     }
   }
 
-  render(){
-    var options = this.state.options;
+  render() {
+    const options = this.state.options;
     return (
       <Typeahead
-        className={this.props.className || ""}
+        className={this.props.className || ''}
         displayKey="name"
         value={this.state.value}
         onChange={this._onChange}
@@ -92,9 +93,12 @@ class TestWrapper extends PureComponent {
         showLoading={this.state.showLoading}
         debounceRate={this.props.debounceRate}
         minLength={1}
-        options={options}/>
-    )
+        showEmpty={this.props.showEmpty || false}
+        emptyTemplate={this.props.emptyTemplate}
+        options={options}
+        placeholder={this.props.placeholder}
+      />);
   }
 }
 
-export {TestWrapper};
+export default TestWrapper;

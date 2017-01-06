@@ -3,7 +3,7 @@ import { storiesOf } from '@kadira/storybook'; // action
 import styled from 'styled-components';
 
 import Typeahead from '../../src/index';
-import { TestWrapper } from './ui.wrappers';
+import TestWrapper from './ui.wrappers';
 import SpinnerGif from '../../src/static/spinner.gif';
 
 require('../static/simple_typeahead.css');
@@ -294,6 +294,43 @@ storiesOf('Presentation UI', module)
               />
             </div>
           </form>
+        </div>
+      );
+    })
+    .add('Styled like twitter typeahead view (with empty template)', () => {
+      const EmptyTemplate = () => (
+        <div className="EmptyItem">
+          Your search turned up 0 results. This most likely means the backend is down, yikes!
+        </div>);
+      return (
+        <div className="TwitterStylePage">
+          <TestWrapper
+            options={[]}
+            allData={[]}
+            value={''}
+            enableShowLoading
+            debounceRate={1000}
+            optionTemplate={TwitterTemplate}
+            loadingTemplate={SpinnerTemplate}
+            showEmpty
+            emptyTemplate={EmptyTemplate}
+          />
+        </div>
+      );
+    })
+    .add('Styled like twitter typeahead view (with placeholder)', () => {
+      return (
+        <div className="TwitterStylePage">
+          <TestWrapper
+            options={[]}
+            allData={[]}
+            value={'How'}
+            enableShowLoading
+            debounceRate={1000}
+            optionTemplate={TwitterTemplate}
+            loadingTemplate={SpinnerTemplate}
+            placeholder="Search Twitter users..."
+          />
         </div>
       );
     });

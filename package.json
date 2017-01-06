@@ -24,14 +24,14 @@
     ]
   },
   "scripts": {
-    "prepublish": ". ./.scripts/prepublish.js",
+    "prepublish": "node ./.scripts/prepublish.js",
     "lint": "eslint --ext .jsx --ext .js src/**; exit 0",
     "lintfix": "eslint --ext .jsx --ext .js src/** --fix; exit 0",
     "testonly": "jest; exit 0;",
     "test": "npm run lint && npm run testonly",
     "test-watch": "npm run testonly -- --watch --watch-extensions js",
     "storybook": "start-storybook -p 9010",
-    "publish-storybook": "bash .scripts/publish_storybook.js",
+    "publish-storybook": "node ./.scripts/publish_storybook.js",
     "test-storybook": "storyshots"
   },
   "devDependencies": {

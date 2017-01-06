@@ -1,6 +1,6 @@
 {
   "name": "react-typeahead2",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React Typeahead2",
   "repository": {
     "type": "git",
@@ -24,14 +24,14 @@
     ]
   },
   "scripts": {
-    "prepublish": ". ./.scripts/prepublish.sh",
+    "prepublish": ". ./.scripts/prepublish.js",
     "lint": "eslint --ext .jsx --ext .js src/**; exit 0",
     "lintfix": "eslint --ext .jsx --ext .js src/** --fix; exit 0",
     "testonly": "jest; exit 0;",
     "test": "npm run lint && npm run testonly",
     "test-watch": "npm run testonly -- --watch --watch-extensions js",
     "storybook": "start-storybook -p 9010",
-    "publish-storybook": "bash .scripts/publish_storybook.sh",
+    "publish-storybook": "bash .scripts/publish_storybook.js",
     "test-storybook": "storyshots"
   },
   "devDependencies": {
@@ -61,6 +61,7 @@
     "react": "^15.3.2",
     "react-addons-test-utils": "^15.3.2",
     "react-dom": "^15.3.2",
+    "shelljs": "^0.7.5",
     "sinon": "^2.0.0-pre.4",
     "storybook-addon-specifications": "^1.0.15",
     "whatwg-fetch": "^2.0.1"

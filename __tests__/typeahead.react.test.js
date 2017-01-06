@@ -39,8 +39,8 @@ SimpleOptionTemplate.propTypes = {
 const documentEventsMap = {};
 
 beforeEach(() => {
-  sinon.stub(console, 'error', (warning) => { throw new Error(warning); });
-  sinon.stub(document, 'addEventListener', (event, cb) => {
+  sinon.stub(console, 'error').callsFake((warning) => { throw new Error(warning); });
+  sinon.stub(document, 'addEventListener').callsFake((event, cb) => {
     documentEventsMap[event] = cb;
   });
 });
@@ -499,7 +499,7 @@ test('Typeahead should move spinner to left for RTL when chnage event raised', (
     { id: 3, name: 'value 3' },
   ];
 
-  sinon.stub(window, 'getComputedStyle', () => ({ direction: 'rtl' }));
+  sinon.stub(window, 'getComputedStyle').callsFake(() => ({ direction: 'rtl' }));
 
   const component = mount(
     <div>
@@ -528,7 +528,7 @@ test('Typeahead should move spinner to left for RTL when new props sets', () => 
     { id: 3, name: 'value 3' },
   ];
 
-  sinon.stub(window, 'getComputedStyle', () => ({ direction: 'rtl' }));
+  sinon.stub(window, 'getComputedStyle').callsFake(() => ({ direction: 'rtl' }));
 
   const component = mount(
     <Typeahead
@@ -707,7 +707,7 @@ test('Typeahead check debounce rateLimitBy', (done) => {
     } catch (e) {
       done.fail(e);
     }
-  }, 101);
+  }, 201);
 });
 
 
@@ -745,7 +745,7 @@ test('Typeahead check trottle rateLimitBy', (done) => {
     } catch (e) {
       done.fail(e);
     }
-  }, 101);
+  }, 201);
 });
 
 

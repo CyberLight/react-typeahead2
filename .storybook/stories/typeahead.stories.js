@@ -1,6 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@kadira/storybook'; // action
 import styled from 'styled-components';
+import Immutable from 'immutable';
 
 import Typeahead from '../../src/index';
 import TestWrapper from './ui.wrappers';
@@ -214,7 +215,28 @@ storiesOf('Presentation UI', module)
         />
       </div>
     );
-  }).add('Simple typeahead with loading view', () => {
+  })
+  .add('Simple typeahead view with Immutable.List of Immutable.Record', () => {
+    const Item = Immutable.Record({ id: 0, name: '' });
+    const options = Immutable.List([
+      new Item({ id: 1, name: 'View #1' }),
+      new Item({ id: 2, name: 'View #2' }),
+      new Item({ id: 3, name: 'Super long View #3' }),
+    ]);
+    return (
+      <div className="SimplePage">
+        <Typeahead
+          displayKey="name"
+          value={'test'}
+          showLoading={false}
+          allData={allOptions}
+          optionTemplate={simpleOptionTemplate}
+          options={options}
+        />
+      </div>
+    );
+  })
+  .add('Simple typeahead with loading view', () => {
     return (
       <div className="SimplePage">
         <TestWrapper
@@ -222,7 +244,6 @@ storiesOf('Presentation UI', module)
           value={'ali-baba'}
           allData={allOptions}
           enableShowLoading
-          debounceRate={300}
           optionTemplate={simpleOptionTemplate}
         />
       </div>
@@ -236,7 +257,6 @@ storiesOf('Presentation UI', module)
             value={'ali-baba'}
             allData={allOptions}
             enableShowLoading
-            debounceRate={300}
             optionTemplate={simpleOptionTemplate}
           />
         </div>
@@ -250,7 +270,6 @@ storiesOf('Presentation UI', module)
             allData={[]}
             value={'intel'}
             enableShowLoading
-            debounceRate={1000}
             optionTemplate={TwitterTemplate}
             loadingTemplate={SpinnerTemplate}
           />

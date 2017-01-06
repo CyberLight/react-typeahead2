@@ -1,3 +1,5 @@
-# React Typeahead Ex Component
+# React Typeahead2
 
-React Typeahead Ex Component
+React Typeahead2 component like an Twitter typeahead
+
+[Storybook demo link](https://cyberlight.github.io/react-typeahead2/)

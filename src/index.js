@@ -292,6 +292,7 @@ class Typeahead extends PureComponent {
     switch (key) {
       case 'Esc':
       case 'Escape': {
+        e.preventDefault();
         this.setState({
           dropdownVisible: false,
           emptyVisible: false,
@@ -331,6 +332,7 @@ class Typeahead extends PureComponent {
       }
       case 'ArrowUp':
       case 'ArrowDown': {
+        e.preventDefault();
         const increment = key === 'ArrowUp' ? -1 : 1;
         const len = this._getOptionsCount(options);
         const calcIndex = (length, curIndex) => {
@@ -365,10 +367,25 @@ class Typeahead extends PureComponent {
             emptyVisible: true,
           });
         }
+
+        this._setPosition(value.length);
         break;
       }
       default:
         break;
+    }
+  }
+
+  _setPosition = (pos) => {
+    const input = this._inputTypeAhead._input;
+    if (input.setSelectionRange) {
+      input.setSelectionRange(pos, pos);
+    } else if (input.createTextRange) {
+      const range = input.createTextRange();
+      range.collapse(true);
+      range.moveEnd('character', pos);
+      range.moveStart('character', pos);
+      range.select();
     }
   }
 

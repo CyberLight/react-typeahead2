@@ -13,4 +13,9 @@ ratings:
   paths:
   - "**.js"
   - "**.jsx"
-exclude_paths: [".storybook", ".scripts", "coverage", "dist", "__tests__"]
+exclude_paths:
+  - ".storybook/"
+  - ".scripts/"
+  - "coverage"
+  - "dist"
+  - "__tests__"

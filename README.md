@@ -12,9 +12,12 @@
 [![NPM](https://nodei.co/npm/react-typeahead2.png)](https://nodei.co/npm/react-typeahead2/)
 
 [![Code Climate](https://codeclimate.com/github/CyberLight/react-typeahead2/badges/gpa.svg)](https://codeclimate.com/github/CyberLight/react-typeahead2)
-[![Dependency Status](https://david-dm.org/CyberLight/react-typeahead2.svg)](https://david-dm.org/CyberLight/react-typeahead2)
 [![Issue Count](https://codeclimate.com/github/CyberLight/react-typeahead2/badges/issue_count.svg)](https://codeclimate.com/github/CyberLight/react-typeahead2)
 [![Test Coverage](https://codeclimate.com/github/CyberLight/react-typeahead2/badges/coverage.svg)](https://codeclimate.com/github/CyberLight/react-typeahead2/coverage)
+
+[![Dependency Status](https://david-dm.org/CyberLight/react-typeahead2.svg)](https://david-dm.org/CyberLight/react-typeahead2)
+[![devDependencies Status](https://david-dm.org/CyberLight/react-typeahead2/dev-status.svg)](https://david-dm.org/CyberLight/react-typeahead2?type=dev)
+[![peerDependencies Status](https://david-dm.org/CyberLight/react-typeahead2/peer-status.svg)](https://david-dm.org/CyberLight/react-typeahead2?type=peer)
 
 React Typeahead2 component like an Twitter typeahead
 

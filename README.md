@@ -1,11 +1,10 @@
 # React Typeahead2
 
+[![Jest tests count](https://img.shields.io/badge/jest-43%20tests-blue.svg)](https://travis-ci.org/CyberLight/react-typeahead2)
 [![Coverage Status](https://coveralls.io/repos/github/CyberLight/react-typeahead2/badge.svg?branch=master)](https://coveralls.io/github/CyberLight/react-typeahead2?branch=master)
 [![Build Status](https://travis-ci.org/CyberLight/react-typeahead2.svg?branch=master)](https://travis-ci.org/CyberLight/react-typeahead2)
-[![Travis](https://img.shields.io/travis/CyberLight/react-typeahead2/master.svg?style=flat-square&label=unix)](https://travis-ci.org/CyberLight/react-typeahead2)
 [![npm version](https://badge.fury.io/js/react-typeahead2.svg)](https://badge.fury.io/js/react-typeahead2)
 [![Build status](https://ci.appveyor.com/api/projects/status/1xl417l6f3u3eqlf?svg=true)](https://ci.appveyor.com/project/CyberLight/react-typeahead2)
-[![AppVeyor](https://img.shields.io/appveyor/ci/CyberLight/react-typeahead2/master.svg?style=flat-square&label=windows)](https://ci.appveyor.com/project/CyberLight/react-typeahead2/branch/master)
 [![npm downloads](https://img.shields.io/npm/dm/react-typeahead2.svg?style=flat-square)](https://www.npmjs.com/package/react-typeahead2)
 [![Gitter Chat](http://img.shields.io/badge/chat-online-brightgreen.svg)](https://gitter.im/react-typeahead2)
 

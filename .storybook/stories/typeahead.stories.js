@@ -79,7 +79,7 @@ const Spinner = styled.img`
   ${props => (props.dir === 'rtl' ? 'left: 7px' : 'right: 7px')};
   width: 27px;
   height: 27px;
-  display: 'block';
+  display: block;
 `;
 
 const SpinnerBootstrap = styled.img`
@@ -195,6 +195,16 @@ storiesOf('Presentation UI', module)
             </div>
           );
         }}
+      />
+    </div>
+  ))
+  .add('Default typeahead view (with infinite loading)', () => (
+    <div className="SimpleExamplePage">
+      <Typeahead
+        displayKey="name"
+        options={allOptions}
+        showLoading
+        optionTemplate={simpleOptionTemplate}
       />
     </div>
   ))

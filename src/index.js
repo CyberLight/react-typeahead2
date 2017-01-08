@@ -106,15 +106,19 @@ class Typeahead extends PureComponent {
 
   componentDidMount() {
     const value = this.state.value;
-    const { clientHeight, clientWidth } = this._inputTypeAhead._input;
-    this.clientHeight = clientHeight;
-    this.clientWidth = clientWidth;
     document.addEventListener('click', this._onDocActivate);
     if (value) {
       if (value.length >= this.state.minLength) {
         this._fetchDataHandler(value);
       }
     }
+    const { clientHeight, clientWidth } = this._inputTypeAhead._input;
+    /* eslint-disable react/no-did-mount-set-state */
+    this.setState({
+      height: clientHeight,
+      width: clientWidth,
+    });
+    /* eslint-enable react/no-did-mount-set-state */
   }
 
   componentWillReceiveProps(nextProps) {
@@ -126,6 +130,7 @@ class Typeahead extends PureComponent {
     const nextValue = this._getValueByIndex(options, 0, displayKey);
     const hintValue = (hint ? this._getHint(value, nextValue) : '');
     const hasOptions = (this._getOptionsCount(nextProps.options) > 0);
+    const { clientHeight, clientWidth } = this._inputTypeAhead._input;
 
     this.setState({
       value: nextProps.value,
@@ -137,8 +142,8 @@ class Typeahead extends PureComponent {
       dropdownVisible: hasOptions,
       hintValue: hint ? hintValue : '',
       direction: dir,
-      width: this.clientWidth,
-      height: this.clientHeight,
+      width: clientWidth,
+      height: clientHeight,
       rateLimitBy: nextProps.rateLimitBy,
       rateLimitWait: nextProps.rateLimitWait,
       showEmpty: nextProps.showEmpty,

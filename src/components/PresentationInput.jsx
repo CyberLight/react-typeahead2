@@ -9,6 +9,7 @@ const PresentationInput = styled(Input)`
   position: absolute;
   padding: 2px 0;
   border-width: 1px;
+  background-color: white;
 `;
 
 export default PresentationInput;

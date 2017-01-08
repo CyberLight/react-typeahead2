@@ -3,7 +3,7 @@ var path = require('path')
 
 set('-e')
 
-var gitPath = exec('git config --get remote.origin.url').stdout
+var gitPath = exec('git config --get remote.origin.url').stdout.trim();
 
 echo(`> Git path: ${gitPath}`)
 
@@ -34,7 +34,8 @@ echo('> Committing in .out')
 exec('git commit -m "Deploy Storybook to GitHub Pages"')
 
 echo('> Pushing to repo in .out')
-exec(`git push --force --quiet ${gitPath} master:gh-pages > /dev/null 2>&1`)
+echo(`> Executing: git push --force --quiet ${gitPath} master:gh-pages`)
+exec(`git push --force --quiet ${gitPath} master:gh-pages`)
 
 cd('..')
 rm('-rf', '.out')

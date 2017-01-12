@@ -68,7 +68,7 @@ class Typeahead extends PureComponent {
     hint: React.PropTypes.bool,
     minLength: React.PropTypes.number,
     showLoading: React.PropTypes.bool,
-    value: React.PropTypes.string,
+    value: React.PropTypes.any,
     className: React.PropTypes.string,
     options: React.PropTypes.oneOfType([
       React.PropTypes.array,
@@ -276,8 +276,8 @@ class Typeahead extends PureComponent {
   }
 
   _getHint = (currentValue, nextValue) => {
-    const lowerCurrentValue = currentValue.toLowerCase();
-    const lowerNextValue = nextValue.toLowerCase();
+    const lowerCurrentValue = String(currentValue).toLowerCase();
+    const lowerNextValue = String(nextValue).toLowerCase();
     if (lowerNextValue.toLowerCase().startsWith(lowerCurrentValue)) {
       return nextValue;
     }
@@ -423,7 +423,7 @@ class Typeahead extends PureComponent {
           disabled
           role="presentation"
           aria-hidden
-          value={this.state.hintValue}
+          value={String(this.state.hintValue)}
           className={`rtex-hint ${this.props.className}`}
         />
         <ComboboxInput
@@ -432,7 +432,7 @@ class Typeahead extends PureComponent {
           aria-expanded="true"
           aria-autocomplete="both"
           placeholder={this._getInputPlaceHolder(this.state.hintValue)}
-          value={value}
+          value={String(value)}
           spellCheck={false}
           autoComplete={false}
           autoCorrect={false}

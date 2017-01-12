@@ -1098,3 +1098,53 @@ test('Typeahead should choose item of Immutable Record by press <Enter>', () => 
   inputComponent.simulate('keyDown', { key: 'Enter' });
   expect(component.find('.rtex-input').at(0).prop('value')).toEqual('value 1');
 });
+
+test('Typeahead should receive any type in value', () => {
+  const templateFn = () => null;
+  expect(() => {
+    mount(
+      <Typeahead
+        value={123}
+        displayKey={'name'}
+        optionTemplate={templateFn}
+      />);
+  }).not.toThrow();
+});
+
+test('Typeahead should correctly show hint', () => {
+  const component = mount(
+    <Typeahead
+      value={12}
+      hint
+      options={[{ id: 123, name: 'aaaaaa' }]}
+      displayKey={'id'}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  component.find('.rtex-input').simulate('focus');
+
+  expect(component.find('.rtex-is-open').length).toEqual(1);
+  expect(component.find('.rtex-option-item').length).toEqual(1);
+
+  const input = component.find('.rtex-input').at(0);
+  input.simulate('keyDown', { key: 'ArrowDown' });
+  const hintComponent = component.find('.rtex-hint').at(0);
+  expect(hintComponent.prop('value')).toEqual('123');
+});
+
+test('Typeahead should correctly receive Object or array', () => {
+  const component = mount(
+    <Typeahead
+      value={{ id: 1, name: 'test' }}
+      hint
+      options={[]}
+      displayKey={'id'}
+      optionTemplate={SimpleOptionTemplate}
+    />);
+
+  expect(component.find('.rtex-input').props().value).toEqual('[object Object]');
+
+  component.setProps({ value: [1, 2, 3] });
+
+  expect(component.find('.rtex-input').props().value).toEqual('1,2,3');
+});

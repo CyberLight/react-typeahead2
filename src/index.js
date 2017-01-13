@@ -42,7 +42,7 @@ class Typeahead extends PureComponent {
     dropdownVisible: false,
     options: [],
     hint: true,
-    minLength: 0,
+    minLength: 1,
     showLoading: false,
     loadingTemplate: defaultLoadingTemplate,
     emptyTemplate: EmptyTemplate,
@@ -217,7 +217,9 @@ class Typeahead extends PureComponent {
 
     if (this.state.minLength && value.length >= minLength) {
       this._fetchDataHandler(value);
-    } else if (this.props.onChange) {
+    }
+
+    if (this.props.onChange) {
       this.props.onChange(e);
     }
 

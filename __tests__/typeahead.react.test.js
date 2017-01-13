@@ -1148,3 +1148,51 @@ test('Typeahead should correctly receive Object or array', () => {
 
   expect(component.find('.rtex-input').props().value).toEqual('1,2,3');
 });
+
+test('Typeahead should correctly update values and trigger events for 2 elements', () => {
+  /* eslint-disable no-undef */
+  const fetchSecond = jest.fn();
+  const fetchFirst = jest.fn();
+  const changeSecond = jest.fn();
+  const changeFirst = jest.fn();
+  /* eslint-enable no-undef */
+
+  const component = mount(
+    <div>
+      <Typeahead
+        hint
+        className="first"
+        value=""
+        options={[]}
+        onFetchData={fetchFirst}
+        onChange={changeFirst}
+        displayKey={'id'}
+        optionTemplate={SimpleOptionTemplate}
+      />
+
+      <Typeahead
+        hint
+        className="second"
+        value=""
+        options={[]}
+        onFetchData={fetchSecond}
+        onChange={changeSecond}
+        displayKey={'name'}
+        optionTemplate={SimpleOptionTemplate}
+      />
+    </div>);
+
+  component.find('.first.rtex-input').simulate('change', { target: { value: 'info' } });
+  expect(component.find('.first.rtex-input').props().value).toEqual('info');
+  expect(fetchFirst).toHaveBeenCalledTimes(1);
+  expect(fetchFirst).toBeCalledWith('info');
+  expect(changeFirst).toHaveBeenCalledTimes(1);
+  expect(changeFirst.mock.calls[0][0].target).toEqual({ value: 'info' });
+
+  component.find('.second.rtex-input').simulate('change', { target: { value: 12 } });
+  expect(component.find('.second.rtex-input').props().value).toEqual('12');
+  expect(fetchSecond).toHaveBeenCalledTimes(1);
+  expect(fetchSecond).toBeCalledWith('12');
+  expect(changeSecond).toHaveBeenCalledTimes(1);
+  expect(changeSecond.mock.calls[0][0].target).toEqual({ value: 12 });
+});

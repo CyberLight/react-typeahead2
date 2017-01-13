@@ -83,7 +83,7 @@ class Typeahead extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.value,
+      value: String(props.value),
       dropdownVisible: false,
       options: props.options,
       selectedIndex: -1,
@@ -107,11 +107,11 @@ class Typeahead extends PureComponent {
   componentDidMount() {
     const value = this.state.value;
     document.addEventListener('click', this._onDocActivate);
-    if (value) {
-      if (value.length >= this.state.minLength) {
-        this._fetchDataHandler(value);
-      }
+
+    if (value.length >= this.state.minLength) {
+      this._fetchDataHandler(value);
     }
+
     const { clientHeight, clientWidth } = this._inputTypeAhead._input;
     /* eslint-disable react/no-did-mount-set-state */
     this.setState({
@@ -123,7 +123,7 @@ class Typeahead extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const dir = getDirection(this._inputTypeAhead._input);
-    const value = nextProps.value;
+    const value = String(nextProps.value);
     const displayKey = nextProps.displayKey;
     const options = nextProps.options;
     const hint = (dir === 'rtl' ? false : nextProps.hint);
@@ -133,7 +133,7 @@ class Typeahead extends PureComponent {
     const { clientHeight, clientWidth } = this._inputTypeAhead._input;
 
     this.setState({
-      value: nextProps.value,
+      value,
       options: nextProps.options,
       selectedIndex: this._getSelectedIndex(options, 0),
       hint,
@@ -162,14 +162,14 @@ class Typeahead extends PureComponent {
       return (options &&
              options.size &&
              options.get(index) &&
-             options.get(index)[displayKey]) ||
+             String(options.get(index)[displayKey])) ||
              this.state.value;
     }
 
     return (options &&
            options.length &&
            options[index] &&
-           options[index][displayKey]) ||
+           String(options[index][displayKey])) ||
            this.state.value;
   }
 
@@ -209,7 +209,7 @@ class Typeahead extends PureComponent {
   }
 
   _onChange = (e) => {
-    const value = e.target.value;
+    const value = String(e.target.value);
     const dir = getDirection(this._inputTypeAhead._input);
     const hint = (dir === 'rtl' ? false : this.state.hint);
     const hasOptions = (this._getOptionsCount(this.state.options) > 0);
@@ -457,8 +457,8 @@ class Typeahead extends PureComponent {
   }
 
   _renderOptions = () => {
-    const dropdownVisible = this.state.dropdownVisible;
     const value = this.state.value;
+    const dropdownVisible = this.state.dropdownVisible;
     const OptionTemplate = this.props.optionTemplate;
     const options = this.state.options;
 

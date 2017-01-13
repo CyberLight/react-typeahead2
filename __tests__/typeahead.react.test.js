@@ -96,7 +96,7 @@ it('Typeahead should hide/display spinner', () => {
   expect(component.find('.rtex-spinner').length).toEqual(0);
 });
 
-it('Typeahead should raise onFetchData for not empty value', () => {
+it('Typeahead should not raise onFetchData for not empty value', () => {
   const templateFn = () => null;
 
   const onFetchData = sinon.spy();
@@ -111,7 +111,7 @@ it('Typeahead should raise onFetchData for not empty value', () => {
       onFetchData={onFetchData}
     />);
 
-  expect(onFetchData.called).toBeTruthy();
+  expect(onFetchData.called).toBeFalsy();
 });
 
 it('Typeahead should raise onChange when value changed', () => {
@@ -564,7 +564,7 @@ test('Typeahead should set default value for minLength', () => {
       optionTemplate={SimpleOptionTemplate}
     />);
 
-  expect(component.prop('minLength')).toEqual(1);
+  expect(component.prop('minLength')).toEqual(0);
 });
 
 test('Typeahead should raise Fetch event if value >= minLength', () => {
@@ -1104,7 +1104,7 @@ test('Typeahead should receive any type in value', () => {
   expect(() => {
     mount(
       <Typeahead
-        value={String(123)}
+        value={123}
         displayKey={'name'}
         optionTemplate={templateFn}
       />);
@@ -1114,7 +1114,7 @@ test('Typeahead should receive any type in value', () => {
 test('Typeahead should correctly show hint', () => {
   const component = mount(
     <Typeahead
-      value={String(12)}
+      value={12}
       hint
       options={[{ id: 123, name: 'aaaaaa' }]}
       displayKey={'id'}
@@ -1135,7 +1135,7 @@ test('Typeahead should correctly show hint', () => {
 test('Typeahead should correctly receive Object or array', () => {
   const component = mount(
     <Typeahead
-      value={String({ id: 1, name: 'test' })}
+      value={{ id: 1, name: 'test' }}
       hint
       options={[]}
       displayKey={'id'}
@@ -1144,7 +1144,7 @@ test('Typeahead should correctly receive Object or array', () => {
 
   expect(component.find('.rtex-input').props().value).toEqual('[object Object]');
 
-  component.setProps({ value: String([1, 2, 3]) });
+  component.setProps({ value: [1, 2, 3] });
 
   expect(component.find('.rtex-input').props().value).toEqual('1,2,3');
 });
@@ -1184,15 +1184,13 @@ test('Typeahead should correctly update values and trigger events for 2 elements
 
   component.find('.first.rtex-input').simulate('change', { target: { value: 'info' } });
   expect(component.find('.first.rtex-input').props().value).toEqual('info');
-  expect(fetchFirst).toHaveBeenCalledTimes(1);
-  expect(fetchFirst).toBeCalledWith('info');
+  expect(fetchFirst).toHaveBeenCalledTimes(0);
   expect(changeFirst).toHaveBeenCalledTimes(1);
   expect(changeFirst.mock.calls[0][0].target).toEqual({ value: 'info' });
 
   component.find('.second.rtex-input').simulate('change', { target: { value: 12 } });
   expect(component.find('.second.rtex-input').props().value).toEqual('12');
-  expect(fetchSecond).toHaveBeenCalledTimes(1);
-  expect(fetchSecond).toBeCalledWith('12');
+  expect(fetchSecond).toHaveBeenCalledTimes(0);
   expect(changeSecond).toHaveBeenCalledTimes(1);
   expect(changeSecond.mock.calls[0][0].target).toEqual({ value: 12 });
 });
@@ -1328,4 +1326,28 @@ test('Typeahead should trigger only onFetchData instead of onChange after minLen
 
   expect(onChange).not.toBeCalled();
   expect(onFetchData).toHaveBeenCalledTimes(1);
+});
+
+test('Typeahead should by default should not trigger onFetchData - only onChange', () => {
+  /* eslint-disable no-undef */
+  const onChange = jest.fn();
+  const onFetchData = jest.fn();
+  /* eslint-enable no-undef */
+
+  const component = mount(
+    <Typeahead
+      value=""
+      hint
+      options={[]}
+      displayKey={'id'}
+      optionTemplate={SimpleOptionTemplate}
+      onFetchData={onFetchData}
+      onChange={onChange}
+    />);
+
+  const event = { target: { value: 'value changed' } };
+  component.find('.rtex-input').simulate('change', event);
+
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onFetchData).not.toBeCalled();
 });

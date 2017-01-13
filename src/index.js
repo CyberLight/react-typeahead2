@@ -42,7 +42,7 @@ class Typeahead extends PureComponent {
     dropdownVisible: false,
     options: [],
     hint: true,
-    minLength: 1,
+    minLength: 0,
     showLoading: false,
     loadingTemplate: defaultLoadingTemplate,
     emptyTemplate: EmptyTemplate,
@@ -68,7 +68,7 @@ class Typeahead extends PureComponent {
     hint: React.PropTypes.bool,
     minLength: React.PropTypes.number,
     showLoading: React.PropTypes.bool,
-    value: React.PropTypes.string,
+    value: React.PropTypes.any,
     className: React.PropTypes.string,
     options: React.PropTypes.oneOfType([
       React.PropTypes.array,
@@ -83,7 +83,7 @@ class Typeahead extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.value,
+      value: String(props.value),
       dropdownVisible: false,
       options: props.options,
       selectedIndex: -1,
@@ -108,7 +108,7 @@ class Typeahead extends PureComponent {
     const value = this.state.value;
     document.addEventListener('click', this._onDocActivate);
 
-    if (value.length >= this.state.minLength) {
+    if (this.state.minLength && (value.length >= this.state.minLength)) {
       this._fetchDataHandler(value);
     }
 
@@ -123,7 +123,7 @@ class Typeahead extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const dir = getDirection(this._inputTypeAhead._input);
-    const value = nextProps.value;
+    const value = String(nextProps.value);
     const displayKey = nextProps.displayKey;
     const options = nextProps.options;
     const hint = (dir === 'rtl' ? false : nextProps.hint);
@@ -213,8 +213,9 @@ class Typeahead extends PureComponent {
     const dir = getDirection(this._inputTypeAhead._input);
     const hint = (dir === 'rtl' ? false : this.state.hint);
     const hasOptions = (this._getOptionsCount(this.state.options) > 0);
+    const minLength = this.state.minLength;
 
-    if (value.length >= this.state.minLength) {
+    if (this.state.minLength && value.length >= minLength) {
       this._fetchDataHandler(value);
     } else if (this.props.onChange) {
       this.props.onChange(e);

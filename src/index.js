@@ -265,7 +265,9 @@ class Typeahead extends PureComponent {
     if (this.props.onOptionClick) {
       const option = this._getOption(options, index);
       this.props.onOptionClick(option, index);
-      this.props.onOptionChange(option, index);
+      if (this.props.onOptionChange) {
+        this.props.onOptionChange(option, index);
+      }
     }
 
     this.setState({

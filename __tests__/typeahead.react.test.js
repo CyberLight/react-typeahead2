@@ -1196,3 +1196,111 @@ test('Typeahead should correctly update values and trigger events for 2 elements
   expect(changeSecond).toHaveBeenCalledTimes(1);
   expect(changeSecond.mock.calls[0][0].target).toEqual({ value: 12 });
 });
+
+test('Typeahead should correctly trigger onOptionClick value for 2 typeahead', () => {
+  /* eslint-disable no-undef */
+  const optionClickSecond = jest.fn();
+  const optionClickFirst = jest.fn();
+  /* eslint-enable no-undef */
+
+  const component = mount(
+    <div>
+      <div className="first_block">
+        <Typeahead
+          hint
+          className="first"
+          value=""
+          options={[{ id: 1, name: 'Item 1' }, { id: 1, name: 'Item 2' }]}
+          displayKey={'id'}
+          onOptionClick={optionClickFirst}
+          optionTemplate={SimpleOptionTemplate}
+        />
+      </div>
+      <div className="second_block">
+        <Typeahead
+          hint
+          className="second"
+          value=""
+          options={[{ id: 10, name: 'Item 10' }, { id: 11, name: 'Item 11' }]}
+          displayKey={'name'}
+          onOptionClick={optionClickSecond}
+          optionTemplate={SimpleOptionTemplate}
+        />
+      </div>
+    </div>);
+
+  const input = component.find('.first.rtex-input');
+  input.simulate('focus');
+  input.simulate('keyDown', { key: 'ArrowDown' });
+  const container = component.find('.first_block .rtex-is-open');
+  const items = container.find('.rtex-option-item');
+
+  expect(items.length).toEqual(2);
+  items.at(0).simulate('click', { nativeEvent: { stopImmediatePropagation: () => {} } });
+  expect(optionClickFirst).toBeCalledWith({ id: 1, name: 'Item 1' }, 0);
+  expect(optionClickFirst).toHaveBeenCalledTimes(1);
+  expect(input.props().value).toEqual('1');
+
+  const input2 = component.find('.second.rtex-input');
+  input2.simulate('focus');
+  input2.simulate('keyDown', { key: 'ArrowDown' });
+  const container2 = component.find('.second_block .rtex-is-open');
+  const items2 = container2.find('.rtex-option-item');
+
+  expect(items2.length).toEqual(2);
+  items2.at(0).simulate('click', { nativeEvent: { stopImmediatePropagation: () => {} } });
+  expect(optionClickSecond).toBeCalledWith({ id: 10, name: 'Item 10' }, 0);
+  expect(optionClickSecond).toHaveBeenCalledTimes(1);
+  expect(input2.props().value).toEqual('Item 10');
+});
+
+test('Typeahead should correctly trigger onOptionChange value for 2 typeahead', () => {
+  /* eslint-disable no-undef */
+  const optionOptionChangeSecond = jest.fn();
+  const optionOptionChangeFirst = jest.fn();
+  /* eslint-enable no-undef */
+
+  const component = mount(
+    <div>
+      <div className="first_block">
+        <Typeahead
+          hint
+          className="first"
+          value=""
+          options={[{ id: 1, name: 'Item 1' }, { id: 1, name: 'Item 2' }]}
+          displayKey={'id'}
+          onOptionChange={optionOptionChangeFirst}
+          optionTemplate={SimpleOptionTemplate}
+        />
+      </div>
+      <div className="second_block">
+        <Typeahead
+          hint
+          className="second"
+          value=""
+          options={[{ id: 10, name: 'Item 10' }, { id: 11, name: 'Item 11' }]}
+          displayKey={'name'}
+          onOptionChange={optionOptionChangeSecond}
+          optionTemplate={SimpleOptionTemplate}
+        />
+      </div>
+    </div>);
+
+  const input = component.find('.first.rtex-input');
+  input.simulate('focus');
+  input.simulate('keyDown', { key: 'ArrowDown' });
+  input.simulate('keyDown', { key: 'Enter' });
+
+  expect(optionOptionChangeFirst).toBeCalledWith({ id: 1, name: 'Item 1' }, 0);
+  expect(optionOptionChangeFirst).toHaveBeenCalledTimes(1);
+  expect(input.props().value).toEqual('1');
+
+  const input2 = component.find('.second.rtex-input');
+  input2.simulate('focus');
+  input2.simulate('keyDown', { key: 'ArrowDown' });
+  input2.simulate('keyDown', { key: 'Enter' });
+
+  expect(optionOptionChangeSecond).toBeCalledWith({ id: 10, name: 'Item 10' }, 0);
+  expect(optionOptionChangeSecond).toHaveBeenCalledTimes(1);
+  expect(input2.props().value).toEqual('Item 10');
+});

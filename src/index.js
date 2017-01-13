@@ -68,7 +68,7 @@ class Typeahead extends PureComponent {
     hint: React.PropTypes.bool,
     minLength: React.PropTypes.number,
     showLoading: React.PropTypes.bool,
-    value: React.PropTypes.any,
+    value: React.PropTypes.string,
     className: React.PropTypes.string,
     options: React.PropTypes.oneOfType([
       React.PropTypes.array,
@@ -83,7 +83,7 @@ class Typeahead extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      value: String(props.value),
+      value: props.value,
       dropdownVisible: false,
       options: props.options,
       selectedIndex: -1,
@@ -123,7 +123,7 @@ class Typeahead extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const dir = getDirection(this._inputTypeAhead._input);
-    const value = String(nextProps.value);
+    const value = nextProps.value;
     const displayKey = nextProps.displayKey;
     const options = nextProps.options;
     const hint = (dir === 'rtl' ? false : nextProps.hint);

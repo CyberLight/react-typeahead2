@@ -1104,7 +1104,7 @@ test('Typeahead should receive any type in value', () => {
   expect(() => {
     mount(
       <Typeahead
-        value={123}
+        value={String(123)}
         displayKey={'name'}
         optionTemplate={templateFn}
       />);
@@ -1114,7 +1114,7 @@ test('Typeahead should receive any type in value', () => {
 test('Typeahead should correctly show hint', () => {
   const component = mount(
     <Typeahead
-      value={12}
+      value={String(12)}
       hint
       options={[{ id: 123, name: 'aaaaaa' }]}
       displayKey={'id'}
@@ -1135,7 +1135,7 @@ test('Typeahead should correctly show hint', () => {
 test('Typeahead should correctly receive Object or array', () => {
   const component = mount(
     <Typeahead
-      value={{ id: 1, name: 'test' }}
+      value={String({ id: 1, name: 'test' })}
       hint
       options={[]}
       displayKey={'id'}
@@ -1144,7 +1144,7 @@ test('Typeahead should correctly receive Object or array', () => {
 
   expect(component.find('.rtex-input').props().value).toEqual('[object Object]');
 
-  component.setProps({ value: [1, 2, 3] });
+  component.setProps({ value: String([1, 2, 3]) });
 
   expect(component.find('.rtex-input').props().value).toEqual('1,2,3');
 });

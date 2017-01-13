@@ -1,6 +1,6 @@
 # React Typeahead2
 
-[![Jest tests count](https://img.shields.io/badge/jest-43%20tests-blue.svg)](https://travis-ci.org/CyberLight/react-typeahead2)
+[![Jest tests count](https://img.shields.io/badge/jest-49%20tests-blue.svg)](https://travis-ci.org/CyberLight/react-typeahead2)
 [![Coverage Status](https://coveralls.io/repos/github/CyberLight/react-typeahead2/badge.svg?branch=master)](https://coveralls.io/github/CyberLight/react-typeahead2?branch=master)
 [![Build Status](https://travis-ci.org/CyberLight/react-typeahead2.svg?branch=master)](https://travis-ci.org/CyberLight/react-typeahead2)
 [![npm version](https://badge.fury.io/js/react-typeahead2.svg)](https://badge.fury.io/js/react-typeahead2)

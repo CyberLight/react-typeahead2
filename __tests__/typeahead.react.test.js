@@ -1304,3 +1304,28 @@ test('Typeahead should correctly trigger onOptionChange value for 2 typeahead', 
   expect(optionOptionChangeSecond).toHaveBeenCalledTimes(1);
   expect(input2.props().value).toEqual('Item 10');
 });
+
+test('Typeahead should trigger only onFetchData instead of onChange after minLength reached', () => {
+  /* eslint-disable no-undef */
+  const onChange = jest.fn();
+  const onFetchData = jest.fn();
+  /* eslint-enable no-undef */
+
+  const component = mount(
+    <Typeahead
+      value=""
+      hint
+      options={[]}
+      displayKey={'id'}
+      minLength={4}
+      optionTemplate={SimpleOptionTemplate}
+      onFetchData={onFetchData}
+      onChange={onChange}
+    />);
+
+  const event = { target: { value: 'value changed' } };
+  component.find('.rtex-input').simulate('change', event);
+
+  expect(onChange).not.toBeCalled();
+  expect(onFetchData).toHaveBeenCalledTimes(1);
+});

@@ -214,12 +214,10 @@ class Typeahead extends PureComponent {
     const hint = (dir === 'rtl' ? false : this.state.hint);
     const hasOptions = (this._getOptionsCount(this.state.options) > 0);
 
-    if (this.props.onChange) {
-      this.props.onChange(e);
-    }
-
     if (value.length >= this.state.minLength) {
       this._fetchDataHandler(value);
+    } else if (this.props.onChange) {
+      this.props.onChange(e);
     }
 
     this.setState({

@@ -159,18 +159,18 @@ class Typeahead extends PureComponent {
 
   _getValueByIndex = (options, index, displayKey) => {
     if (Immutable.List.isList(options)) {
-      return (options &&
+      return String((options &&
              options.size &&
              options.get(index) &&
-             String(options.get(index)[displayKey])) ||
-             this.state.value;
+             options.get(index)[displayKey]) ||
+             this.state.value);
     }
 
-    return (options &&
+    return String((options &&
            options.length &&
            options[index] &&
-           String(options[index][displayKey])) ||
-           this.state.value;
+           options[index][displayKey]) ||
+           this.state.value);
   }
 
   _getSelectedIndex = (options, index) => {
@@ -214,14 +214,6 @@ class Typeahead extends PureComponent {
     const hint = (dir === 'rtl' ? false : this.state.hint);
     const hasOptions = (this._getOptionsCount(this.state.options) > 0);
 
-    this.setState({
-      value,
-      selectedIndex: -1,
-      dropdownVisible: hasOptions,
-      hint,
-      direction: dir,
-    });
-
     if (this.props.onChange) {
       this.props.onChange(e);
     }
@@ -229,6 +221,14 @@ class Typeahead extends PureComponent {
     if (value.length >= this.state.minLength) {
       this._fetchDataHandler(value);
     }
+
+    this.setState({
+      value,
+      selectedIndex: -1,
+      dropdownVisible: hasOptions,
+      hint,
+      direction: dir,
+    });
   }
 
   _defaultFetchHandler = (value) => {
@@ -281,7 +281,7 @@ class Typeahead extends PureComponent {
     const lowerCurrentValue = String(currentValue).toLowerCase();
     const lowerNextValue = String(nextValue).toLowerCase();
     if (lowerNextValue.toLowerCase().startsWith(lowerCurrentValue)) {
-      return nextValue;
+      return String(nextValue);
     }
     return '';
   }
@@ -425,7 +425,7 @@ class Typeahead extends PureComponent {
           disabled
           role="presentation"
           aria-hidden
-          value={String(this.state.hintValue)}
+          value={this.state.hintValue}
           className={`rtex-hint ${this.props.className}`}
         />
         <ComboboxInput
@@ -434,7 +434,7 @@ class Typeahead extends PureComponent {
           aria-expanded="true"
           aria-autocomplete="both"
           placeholder={this._getInputPlaceHolder(this.state.hintValue)}
-          value={String(value)}
+          value={value}
           spellCheck={false}
           autoComplete={false}
           autoCorrect={false}
